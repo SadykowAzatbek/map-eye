@@ -12,6 +12,11 @@ import { AuthService } from './auth/auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/local.strategy';
 import { TokenAuthGuard } from './auth/token-auth.guard';
+import { InstitutionsController } from './institutions/institutions.controller';
+import { Institution, InstitutionSchema } from './schemas/institution.schema';
+import { PermitGuard } from './auth/permit.guard';
+import { ReviewController } from './review/review.controller';
+import { Review, ReviewSchema } from './schemas/review.schema';
 
 @Module({
   imports: [
@@ -20,6 +25,8 @@ import { TokenAuthGuard } from './auth/token-auth.guard';
       { name: Category.name, schema: CategorySchema },
       { name: Product.name, schema: ProductSchema },
       { name: User.name, schema: UserSchema },
+      { name: Institution.name, schema: InstitutionSchema },
+      { name: Review.name, schema: ReviewSchema },
     ]),
     PassportModule,
   ],
@@ -28,7 +35,15 @@ import { TokenAuthGuard } from './auth/token-auth.guard';
     ProductsController,
     CategoriesController,
     UsersController,
+    InstitutionsController,
+    ReviewController,
   ],
-  providers: [AppService, AuthService, LocalStrategy, TokenAuthGuard],
+  providers: [
+    AppService,
+    AuthService,
+    LocalStrategy,
+    TokenAuthGuard,
+    PermitGuard,
+  ],
 })
 export class AppModule {}
