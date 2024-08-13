@@ -28,6 +28,7 @@ import * as path from 'path';
 import { Request } from 'express';
 import { PermitGuard } from '../auth/permit.guard';
 import { Roles } from '../auth/roles.decorator';
+import { Review, ReviewDocument } from '../schemas/review.schema';
 
 interface UserRequest extends Request {
   user: {
@@ -41,6 +42,8 @@ export class InstitutionsController {
   constructor(
     @InjectModel(Institution.name)
     private institutionModel: Model<InstitutionDocument>,
+    @InjectModel(Review.name)
+    private reviewModel: Model<ReviewDocument>,
   ) {}
 
   @UseGuards(TokenAuthGuard)
@@ -87,6 +90,28 @@ export class InstitutionsController {
   @Get()
   async getInstitutions() {
     return this.institutionModel.find();
+  }
+
+  @Get(':id')
+  async getInstitution(@Param('id') id: string) {
+    const objectId = new mongoose.Types.ObjectId(id);
+    const institution = await this.institutionModel.findById(id);
+    if (!institution) {
+      throw new UnprocessableEntityException('Institution not found');
+    }
+
+    const reviews = await this.reviewModel.find({ institutionId: objectId });
+    const averageRating =
+      reviews.length > 0
+        ? reviews.reduce((acc, curr) => acc + curr.grade, 0) / reviews.length
+        : 0;
+
+    if (institution.rating !== averageRating) {
+      institution.rating = averageRating;
+      await institution.save();
+    }
+
+    return institution;
   }
 
   @UseGuards(TokenAuthGuard)

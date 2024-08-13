@@ -59,20 +59,31 @@ export class ReviewController {
     @Body() reviewDto: CreateReviewsDto,
     @Req() req: UserRequest,
   ) {
-    const review = await this.reviewModel.findOne({ userId: req.user._id });
-    if (review) {
-      throw new BadRequestException('the review has already been sent!');
+    const objectId = new mongoose.Types.ObjectId(id);
+
+    // Проверяем, существует ли уже отзыв от данного пользователя на данное заведение
+    const existingReview = await this.reviewModel.findOne({
+      userId: req.user._id,
+      institutionId: objectId,
+    });
+
+    if (existingReview) {
+      throw new BadRequestException('отзыв уже существует');
     }
-    const getInstitution = await this.institutionModel.findById(id);
+
+    // Проверяем, существует ли заведение
+    const getInstitution = await this.institutionModel.findById(objectId);
     if (!getInstitution) {
-      throw new UnprocessableEntityException();
+      throw new UnprocessableEntityException('Заведение не найдено.');
     }
+
     const createReview = new this.reviewModel({
-      userId: req.user?._id,
+      userId: req.user._id,
       institutionId: getInstitution._id,
       grade: reviewDto.grade,
       description: reviewDto.description,
     });
+
     await createReview.save();
     return createReview;
   }
