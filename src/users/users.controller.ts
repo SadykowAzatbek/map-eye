@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Post,
   Req,
   UnprocessableEntityException,
@@ -12,6 +13,7 @@ import mongoose, { Model } from 'mongoose';
 import { CreateUserDto } from './create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import { TokenAuthGuard } from '../auth/token-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -39,6 +41,34 @@ export class UsersController {
 
       throw err;
     }
+  }
+
+  @UseGuards(TokenAuthGuard)
+  @Delete('sessions')
+  async logout(@Req() req: Request) {
+    const headerValue = req.get('Authorization');
+    const successMessage = { message: 'Успешная операция!' };
+
+    if (!headerValue) {
+      throw new UnprocessableEntityException();
+    }
+
+    const [_bearer, token] = headerValue.split(' ');
+
+    if (!token) {
+      throw new UnprocessableEntityException();
+    }
+
+    const user = await this.userModel.findOne({ token });
+
+    if (!user) {
+      throw new UnprocessableEntityException();
+    }
+
+    user.generateToken();
+    await user.save();
+
+    return successMessage;
   }
 
   @UseGuards(AuthGuard('local'))
