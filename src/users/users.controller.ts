@@ -25,6 +25,14 @@ export class UsersController {
   @Post()
   async registerUser(@Body() registerUserDto: CreateUserDto) {
     try {
+      const existUser = await this.userModel.findOne({
+        email: registerUserDto.email,
+      });
+
+      if (existUser) {
+        throw new UnprocessableEntityException();
+      }
+
       const user = new this.userModel({
         email: registerUserDto.email,
         password: registerUserDto.password,

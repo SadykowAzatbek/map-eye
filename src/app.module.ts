@@ -16,7 +16,7 @@ import { Review, ReviewSchema } from './schemas/review.schema';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/map'),
+    MongooseModule.forRoot('mongodb://localhost/map-eye'),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Institution.name, schema: InstitutionSchema },
