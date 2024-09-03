@@ -75,6 +75,9 @@ export class InstitutionsController {
         schedule: institutionDto.schedule,
         rating: institutionDto.rating,
         approved: institutionDto.approved,
+        workingHours: institutionDto.workingHours,
+        address: institutionDto.address,
+        coordinates: institutionDto.coordinates,
       });
       await institution.save();
       return institution;

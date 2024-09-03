@@ -13,4 +13,10 @@ export class CreateInstitutionsDto {
   };
   rating: number;
   approved: boolean;
+  workingHours: {
+    start: number;
+    finish: number;
+  };
+  address: string;
+  coordinates: [number, number];
 }

@@ -46,6 +46,34 @@ export class Institution {
 
   @Prop({ required: true, default: false })
   approved: boolean;
+
+  @Prop({
+    required: true,
+    type: Object,
+    default: {
+      start: 0,
+      finish: 0,
+    },
+  })
+  workingHours: {
+    start: number;
+    finish: number;
+  };
+
+  @Prop({ required: true })
+  address: string;
+
+  @Prop({
+    type: [Number],
+    required: true,
+    validate: {
+      validator: (v: number[]) => {
+        return v.length === 2;
+      },
+      message: (props) => `${props.value} должно содержать ровно два элемента.`,
+    },
+  })
+  coordinates: [number, number];
 }
 
 export const InstitutionSchema = SchemaFactory.createForClass(Institution);
