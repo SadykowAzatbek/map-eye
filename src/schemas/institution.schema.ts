@@ -19,27 +19,22 @@ export class Institution {
   description: string;
 
   @Prop({
-    type: Object,
+    type: Array,
     required: true,
-    default: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: false,
-      sunday: false,
-    },
+    default: [
+      { day: 'monday', open: true },
+      { day: 'tuesday', open: true },
+      { day: 'wednesday', open: true },
+      { day: 'thursday', open: true },
+      { day: 'friday', open: true },
+      { day: 'saturday', open: false },
+      { day: 'sunday', open: false },
+    ],
   })
-  schedule: {
-    monday: boolean;
-    tuesday: boolean;
-    wednesday: boolean;
-    thursday: boolean;
-    friday: boolean;
-    saturday: boolean;
-    sunday: boolean;
-  };
+  openingDays: {
+    day: string;
+    open: boolean;
+  }[];
 
   @Prop({ required: true, default: 0 })
   rating: number;
@@ -51,13 +46,13 @@ export class Institution {
     required: true,
     type: Object,
     default: {
-      start: 0,
-      finish: 0,
+      start: '00:00',
+      finish: '00:00',
     },
   })
   workingHours: {
-    start: number;
-    finish: number;
+    start: string;
+    finish: string;
   };
 
   @Prop({ required: true })
