@@ -1,0 +1,38 @@
+.react-tel-input > .special-label {
+  display: none;
+}
+.custom-tel-label {
+  position: absolute;
+  z-index: 1;
+  top: 7px;
+  left: 25px;
+  display: block;
+  background: white;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.custom-tel-label-pup {
+  position: absolute;
+  z-index: 1;
+  top: -8px;
+  left: 25px;
+  display: block;
+  background: white;
+  padding: 0 5px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.custom-tel-container {
+  position: relative;
+}
+
+.react-tel-input .form-control {
+  height: 56px;
+}
+
+.react-tel-input .form-control:focus {
+  border-color: #5f9ea0;
+  box-shadow: 0 0 0 1px #5f9ea0;
+}

@@ -1,0 +1,136 @@
+.main-nav {
+  display: flex;
+  gap: 7px;
+  box-shadow: 1px 1px 1px 1px rgba(34, 60, 80, 0.3);
+  background: #fff;
+  border-radius: 4px;
+  padding-left: 7px;
+}
+
+.time-styles {
+  width: 150px;
+}
+
+.institution-form {
+  margin-top: 100px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.form-block {
+  padding: 20px;
+  width: 48%;
+  margin: 1%;
+}
+
+.main-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-left: 8%;
+  padding-right: 5%;
+}
+
+.institution-btn {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form-time {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px 0;
+  padding: 5px;
+  width: 60%;
+}
+
+.search-list {
+  border: 1px solid #ddd;
+  padding: 15px;
+  cursor: pointer;
+}
+
+.search-list:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.phone-input {
+  width: 97%;
+  box-sizing: border-box !important;
+  border: 1px solid #C0C0C0;
+  padding: 18px 0 18px 50px;
+  font-size: 14px;
+  border-radius: 3px;
+}
+
+.phone-input:hover:not(:focus) {
+  border: 1px solid #000; /* Цвет границы при наведении */
+}
+
+.phone-input:focus {
+  outline: 2px solid #29a130; /* Цвет границ инпута при активном фокусе */
+  border: none; /* убираем границу */
+}
+
+.phone-input.error-border {
+  border: 1px solid #ff0000; /* Цвет границы при ошибке */
+}
+
+.phone-input.error-border:hover:not(:focus) {
+  border: 1px solid #ff0000; /* Цвет границы при наведении без фокуса*/
+}
+
+.phone-input.error-border:focus {
+  outline: 2px solid red; /* Цвет границ инпута при активном фокусе */
+  border: none; /* убираем границу */
+}
+
+.phone-input.error-text {
+  color: #ff0000;
+}
+
+.phone-block {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.main-social-block {
+  display: flex;
+  border: 2px solid #000;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.social-media-style {
+  display: flex;
+  align-items: center;
+  /*border: 1px solid #000;*/
+}
+
+.social-media-style .no-img {
+  display: none;
+}
+
+.social-media-style img {
+  width: 36px;
+  margin: 2px;
+}
+
+.open-close-style {
+  display: flex;
+  align-items: center;
+  padding: 8px 8px;
+  border: 2px solid #000;
+  border-radius: 10px;
+}
+
+.open-close-margin {
+  margin-right: 10px;
+}
+
+.open-close-new-margin {
+  margin-right: 3px;
+}
