@@ -123,6 +123,8 @@ const CreateInstitution = () => {
   console.log(state);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
 
+  const [active, setActive] = useState(true);
+
   const searchStreet = async (query: string) => {
     const response = await axiosApi.get(`https://nominatim.openstreetmap.org/search?q=${query}&format=json`);
     const filterData = response.data
@@ -167,6 +169,17 @@ const CreateInstitution = () => {
       ...prevState,
       [name]: value,
     }));
+
+    if (
+      (state.name.trim() === '' && state.name.includes(' ')) ||
+      state.name === '' ||
+      (state.address.trim() === '' && state.address.includes(' ')) ||
+      state.address === ''
+    ) {
+      setActive(true);
+    } else {
+      setActive(false);
+    }
   };
 
   const handleTimeChange = (index: number, name: 'start' | 'finish', value: Dayjs | null) => {
@@ -367,7 +380,7 @@ const CreateInstitution = () => {
             onChange={inputChangeHandler}
             error={state.address.trim() === '' && state.address.includes(' ')}
             helperText={
-              state.name.trim() === '' && state.name.includes(' ')
+              state.address.trim() === '' && state.address.includes(' ')
                 ? 'Поле не должно быть пустым!'
                 : ''
             }
@@ -485,7 +498,7 @@ const CreateInstitution = () => {
         </div>
 
         <div className="institution-btn">
-          <Button type="submit">Отправить</Button>
+          <Button type="submit" disabled={active}>Отправить</Button>
         </div>
     </Box>
     </>
