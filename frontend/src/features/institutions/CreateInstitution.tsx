@@ -123,7 +123,7 @@ const CreateInstitution = () => {
   console.log(state);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
 
-  const [active, setActive] = useState(true);
+  // const [active, setActive] = useState(true);
 
   const searchStreet = async (query: string) => {
     const response = await axiosApi.get(`https://nominatim.openstreetmap.org/search?q=${query}&format=json`);
@@ -169,17 +169,6 @@ const CreateInstitution = () => {
       ...prevState,
       [name]: value,
     }));
-
-    if (
-      (state.name.trim() === '' && state.name.includes(' ')) ||
-      state.name === '' ||
-      (state.address.trim() === '' && state.address.includes(' ')) ||
-      state.address === ''
-    ) {
-      setActive(true);
-    } else {
-      setActive(false);
-    }
   };
 
   const handleTimeChange = (index: number, name: 'start' | 'finish', value: Dayjs | null) => {
@@ -360,7 +349,7 @@ const CreateInstitution = () => {
         />
 
         <TextField
-          label="Описание"
+          label="Описание (например, что представляет из себя ваше заведение)"
           name="description"
           multiline //input становится textarea
           rows={8} //Кол-во видимых строк
@@ -458,7 +447,7 @@ const CreateInstitution = () => {
             onChange={(value) => handleSetTimeEveryone('finish', value)}
             ampm={false}
           />
-          </LocalizationProvider>
+        </LocalizationProvider>
 
           <Typography component="div" sx={{mt: 3}}>Рабочие дни:</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -498,7 +487,21 @@ const CreateInstitution = () => {
         </div>
 
         <div className="institution-btn">
-          <Button type="submit" disabled={active}>Отправить</Button>
+          <Button
+            type="submit"
+            disabled={
+              state.name.trim() === '' ||
+              state.address.trim() === '' ||
+              state.schedule.every(item => !item.open) ||
+              state.schedule.filter(item => item.open).some(
+                item =>
+                  !dayjs(item.start, 'HH:mm', true).isValid() ||
+                  !dayjs(item.finish, 'HH:mm', true).isValid()
+              )
+            }
+          >
+            Отправить
+          </Button>
         </div>
     </Box>
     </>
