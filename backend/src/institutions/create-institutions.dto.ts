@@ -2,20 +2,14 @@ export class CreateInstitutionsDto {
   name: string;
   description: string;
   schedule: {
-    monday: boolean;
-    tuesday: boolean;
-    wednesday: boolean;
-    thursday: boolean;
-    friday: boolean;
-    saturday: boolean;
-    sunday: boolean;
-  };
+    day: string;
+    open: boolean;
+    start: string;
+    finish: string;
+    lunch: boolean;
+  }[];
   rating: number;
   approved: boolean;
-  workingHours: {
-    start: number;
-    finish: number;
-  };
   address: string;
   coordinates: [number, number];
   phoneNumber: {

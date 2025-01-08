@@ -55,7 +55,6 @@ export class InstitutionsController {
         schedule: institutionDto.schedule,
         rating: institutionDto.rating,
         approved: institutionDto.approved,
-        workingHours: institutionDto.workingHours,
         address: institutionDto.address,
         coordinates: institutionDto.coordinates,
         phoneNumber: institutionDto.phoneNumber,
