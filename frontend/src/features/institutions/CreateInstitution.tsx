@@ -80,6 +80,12 @@ const CreateInstitution = () => {
         start: dayjs('00:00', 'HH:mm'),
         finish: dayjs('00:00', 'HH:mm'),
       },
+      {
+        day: 'Перерыв',
+        open: false,
+        start: dayjs('12:30', 'HH:mm'),
+        finish: dayjs('13:30', 'HH:mm'),
+      }
     ],
     address: '',
     coordinates: [0, 0],
@@ -461,7 +467,7 @@ const CreateInstitution = () => {
                   }
                   label={elem.day + ':'}
                 />
-                {elem.open ?
+                {elem.open ? (
                   <div style={{display: 'inline-block'}}>
                     <TimePicker
                       className="time-styles"
@@ -478,7 +484,11 @@ const CreateInstitution = () => {
                       ampm={false}
                     />
                   </div>
-                  : 'Закрыто'}
+                ) : elem.day === 'Перерыв' ? (
+                  'Без перерыва'
+                ) : (
+                  'Закрыто'
+                )}
               </div>
             ))}
           </LocalizationProvider>

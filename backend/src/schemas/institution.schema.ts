@@ -62,7 +62,8 @@ export class Institution {
         finish: '2024-09-09T18:00:00.000Z',
       },
       {
-        lunch: true,
+        day: 'Перерыв',
+        open: false,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
       },
@@ -73,7 +74,6 @@ export class Institution {
     open: boolean;
     start: string;
     finish: string;
-    lunch: boolean;
   }[];
 
   @Prop({ required: true, default: 0 })

@@ -6,7 +6,6 @@ export class CreateInstitutionsDto {
     open: boolean;
     start: string;
     finish: string;
-    lunch: boolean;
   }[];
   rating: number;
   approved: boolean;
