@@ -134,3 +134,8 @@
 .open-close-new-margin {
   margin-right: 3px;
 }
+
+.twenty-hours {
+  display: flex;
+  align-items: center;
+}

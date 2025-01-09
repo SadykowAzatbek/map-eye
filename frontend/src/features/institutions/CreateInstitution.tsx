@@ -43,48 +43,56 @@ const CreateInstitution = () => {
         open: true,
         start: dayjs('00:00', 'HH:mm'),
         finish: dayjs('00:00', 'HH:mm'),
+        twentyFourHours: false,
       },
       {
         day: 'Вторник',
         open: true,
         start: dayjs('00:00', 'HH:mm'),
         finish: dayjs('00:00', 'HH:mm'),
+        twentyFourHours: false,
       },
       {
         day: 'Среда',
         open: true,
         start: dayjs('00:00', 'HH:mm'),
         finish: dayjs('00:00', 'HH:mm'),
+        twentyFourHours: false,
       },
       {
         day: 'Четверг',
         open: true,
         start: dayjs('00:00', 'HH:mm'),
         finish: dayjs('00:00', 'HH:mm'),
+        twentyFourHours: false,
       },
       {
         day: 'Пятница',
         open: true,
         start: dayjs('00:00', 'HH:mm'),
         finish: dayjs('00:00', 'HH:mm'),
+        twentyFourHours: false,
       },
       {
         day: 'Суббота',
         open: false,
         start: dayjs('00:00', 'HH:mm'),
         finish: dayjs('00:00', 'HH:mm'),
+        twentyFourHours: false,
       },
       {
         day: 'Воскресенье',
         open: false,
         start: dayjs('00:00', 'HH:mm'),
         finish: dayjs('00:00', 'HH:mm'),
+        twentyFourHours: false,
       },
       {
         day: 'Перерыв',
         open: false,
         start: dayjs('12:30', 'HH:mm'),
         finish: dayjs('13:30', 'HH:mm'),
+        twentyFourHours: false,
       }
     ],
     address: '',
@@ -325,6 +333,15 @@ const CreateInstitution = () => {
     }));
   };
 
+  const handleTwentyHoursChange = (index: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      schedule: prevState.schedule.map((item, i) =>
+        i === index ? { ...item, twentyFourHours: !item.twentyFourHours } : item
+      ),
+    }));
+  };
+
   const formSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
 
@@ -429,7 +446,6 @@ const CreateInstitution = () => {
 
         <div>
           Инфо про инпуты (зачем нужно)
-          ДОБАВИТЬ ПЕРЕРЫВ
           Добавить круглосуточно
           Добавить город, местонахождения
           СОСТАВИТЬ СПИСОК НОМЕРОВ
@@ -475,6 +491,7 @@ const CreateInstitution = () => {
                       value={elem.start}
                       onChange={(value) => handleTimeChange(index, 'start', value)}
                       ampm={false}
+                      disabled={elem.twentyFourHours}
                     />
                     <TimePicker
                       className="time-styles"
@@ -482,7 +499,18 @@ const CreateInstitution = () => {
                       value={elem.finish}
                       onChange={(value) => handleTimeChange(index, 'finish', value)}
                       ampm={false}
+                      disabled={elem.twentyFourHours}
                     />
+                    {elem.day !== 'Перерыв' ?
+                      <div className="twenty-hours">
+                        Круглосуточно:
+                        <Checkbox
+                          checked={elem.twentyFourHours}
+                          onChange={() => handleTwentyHoursChange(index)}
+                        />
+                      </div> :
+                      ''
+                    }
                   </div>
                 ) : elem.day === 'Перерыв' ? (
                   'Без перерыва'
@@ -492,11 +520,11 @@ const CreateInstitution = () => {
               </div>
             ))}
           </LocalizationProvider>
-        </div>
+      </div>
 
-        <div className="institution-btn">
-          <Button
-            type="submit"
+      <div className="institution-btn">
+        <Button
+          type="submit"
             disabled={
               state.name.trim() === '' ||
               state.address.trim() === '' ||

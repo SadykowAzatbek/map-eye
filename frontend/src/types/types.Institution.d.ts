@@ -8,6 +8,7 @@ export interface Institution {
     open: boolean,
     start: dayjs.Dayjs;
     finish: dayjs.Dayjs;
+    twentyFourHours: boolean,
   }[];
   address: string;
   coordinates: [number, number];

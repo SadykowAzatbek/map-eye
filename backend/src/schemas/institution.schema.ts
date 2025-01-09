@@ -24,48 +24,56 @@ export class Institution {
         open: true,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
+        twentyFourHours: false,
       },
       {
         day: 'Вторник',
         open: true,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
+        twentyFourHours: false,
       },
       {
         day: 'Среда',
         open: true,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
+        twentyFourHours: false,
       },
       {
         day: 'Четверг',
         open: true,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
+        twentyFourHours: false,
       },
       {
         day: 'Пятница',
         open: true,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
+        twentyFourHours: false,
       },
       {
         day: 'Суббота',
         open: false,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
+        twentyFourHours: false,
       },
       {
         day: 'Воскресенье',
         open: false,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
+        twentyFourHours: false,
       },
       {
         day: 'Перерыв',
         open: false,
         start: '2024-09-09T18:00:00.000Z',
         finish: '2024-09-09T18:00:00.000Z',
+        twentyFourHours: false,
       },
     ],
   })
@@ -74,6 +82,7 @@ export class Institution {
     open: boolean;
     start: string;
     finish: string;
+    twentyFourHours: boolean;
   }[];
 
   @Prop({ required: true, default: 0 })
