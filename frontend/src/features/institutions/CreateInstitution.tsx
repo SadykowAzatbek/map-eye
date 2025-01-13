@@ -26,6 +26,8 @@ import facebook from '../../../public/facebook.png';
 import instagram from '../../../public/instagram.png';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+
 
 interface searchTable {
   displayName: string;
@@ -136,8 +138,6 @@ const CreateInstitution = () => {
   });
   console.log(state);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
-
-  // const [active, setActive] = useState(true);
 
   const searchStreet = async (query: string) => {
     const response = await axiosApi.get(`https://nominatim.openstreetmap.org/search?q=${query}&format=json`);
@@ -382,21 +382,26 @@ const CreateInstitution = () => {
         />
 
         <div>
-          <TextField
-            fullWidth
-            required
-            label="Адрес заведение (Улица, номер здании)"
-            name="address"
-            type="text"
-            value={state.address}
-            onChange={inputChangeHandler}
-            error={state.address.trim() === '' && state.address.includes(' ')}
-            helperText={
-              state.address.trim() === '' && state.address.includes(' ')
-                ? 'Поле не должно быть пустым!'
-                : ''
-            }
-          />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <TextField
+              fullWidth
+              required
+              label="Адрес заведение (Улица, номер здании)"
+              name="address"
+              type="text"
+              value={state.address}
+              onChange={inputChangeHandler}
+              error={state.address.trim() === '' && state.address.includes(' ')}
+              helperText={
+                state.address.trim() === '' && state.address.includes(' ')
+                  ? 'Поле не должно быть пустым!'
+                  : ''
+              }
+            />
+            <Tooltip title="Ваш город {Город}? Если нет то поменяйте регион или/и город" sx={{ border: '2px solid #000', ml: 1, borderRadius: 2 }}>
+              <PriorityHighIcon />
+            </Tooltip>
+          </div>
           {searchResult.map((elem, i) => (
             elem.displayName !== state.address &&
             <Search key={i} displayName={elem.displayName} onClick={() => onClickAddress(elem.displayName)}/>
@@ -442,13 +447,6 @@ const CreateInstitution = () => {
               <Button type="button" onClick={() => deletePhone(elem.id)}>Удалить</Button>
             </div>
           ))}
-        </div>
-
-        <div>
-          Инфо про инпуты (зачем нужно)
-          Добавить круглосуточно
-          Добавить город, местонахождения
-          СОСТАВИТЬ СПИСОК НОМЕРОВ
         </div>
       </div>
 
@@ -531,6 +529,7 @@ const CreateInstitution = () => {
               state.schedule.every(item => !item.open) ||
               state.schedule.filter(item => item.open).some(
                 item =>
+                  item.twentyFourHours ? false :
                   !dayjs(item.start, 'HH:mm', true).isValid() ||
                   !dayjs(item.finish, 'HH:mm', true).isValid()
               )

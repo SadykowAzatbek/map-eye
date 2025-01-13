@@ -15,6 +15,8 @@ import { ReviewController } from './review/review.controller';
 import { Review, ReviewSchema } from './schemas/review.schema';
 import { ImagesController } from './images/images.controller';
 import { Image, ImageSchema } from './schemas/image.schema';
+import { Location, LocationSchema } from './schemas/location.schema';
+import { LocationController } from './location/location.controller';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { Image, ImageSchema } from './schemas/image.schema';
       { name: Institution.name, schema: InstitutionSchema },
       { name: Review.name, schema: ReviewSchema },
       { name: Image.name, schema: ImageSchema },
+      { name: Location.name, schema: LocationSchema }
     ]),
     PassportModule,
   ],
@@ -33,6 +36,7 @@ import { Image, ImageSchema } from './schemas/image.schema';
     InstitutionsController,
     ReviewController,
     ImagesController,
+    LocationController,
   ],
   providers: [
     AppService,
