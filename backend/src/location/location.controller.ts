@@ -1,4 +1,13 @@
-import {Body, Controller, Param, Patch, Post, Req, UnprocessableEntityException, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UnprocessableEntityException,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Location, LocationDocument } from '../schemas/location.schema';
@@ -37,19 +46,16 @@ export class LocationController {
 
   @UseGuards(TokenAuthGuard)
   @Patch(':id')
-  async updateLocation(@Param('id') id: string) {
+  async updateLocation(
+    @Param('id') id: string,
+    @Req() req: UserRequest,
+    @Body() locationDto: CreateLocationDto,
+  ) {
     const location = await this.locationModel.findById(id);
-    if (!location) {
-      throw new UnprocessableEntityException('Location not found');
+    if (req.user._id.toString() !== location.userId.toString()) {
+      throw new UnprocessableEntityException();
     }
-    const updateLocation = await this.locationModel.findByIdAndUpdate(
-      id,
-      location,
-      { new: true },
-    );
-    return {
-      message: 'Updated location',
-      updateLocation,
-    };
+    await this.locationModel.updateOne({ _id: id }, locationDto, { new: true });
+    return this.locationModel.findById(id);
   }
 }
