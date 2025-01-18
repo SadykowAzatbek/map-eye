@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -57,5 +58,15 @@ export class LocationController {
     }
     await this.locationModel.updateOne({ _id: id }, locationDto, { new: true });
     return this.locationModel.findById(id);
+  }
+
+  @UseGuards(TokenAuthGuard)
+  @Get(':id')
+  async getLocation(@Param('id') id: string, @Req() req: UserRequest) {
+    const getMyLocation = await this.locationModel.findById(id);
+    if (req.user._id.toString() !== getMyLocation.userId.toString()) {
+      throw new UnprocessableEntityException();
+    }
+    return getMyLocation;
   }
 }

@@ -1,9 +1,10 @@
 export const apiURL = import.meta.env['VITE_API_URL'];
 
 export const serverRoute = {
-  users: '/users',
-  sessions: '/users/sessions',
-  institutions: '/institutions',
+  users: '/users/',
+  sessions: '/users/sessions/',
+  institutions: '/institutions/',
+  location: '/locations/',
 };
 
 export const Roles = [
