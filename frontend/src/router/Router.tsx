@@ -6,6 +6,7 @@ import { appRoutes } from '../utils/constants';
 import NotFound from '../components/UI/NotFound/NotFound';
 import Map from '../features/maps/Map.tsx';
 import CreateInstitution from '../features/institutions/CreateInstitution.tsx';
+import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -30,7 +31,11 @@ export const router = createBrowserRouter([
       },
       {
         path: appRoutes.createInstitution,
-        element: <CreateInstitution />,
+        element: (
+          <ProtectedRoute>
+            <CreateInstitution />
+          </ProtectedRoute>
+        ),
       }
     ],
   },
