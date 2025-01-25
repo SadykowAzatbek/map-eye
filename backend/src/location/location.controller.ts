@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -10,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import mongoose, { Model, ObjectId } from 'mongoose';
 import { Location, LocationDocument } from '../schemas/location.schema';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
 import { Request } from 'express';
@@ -30,12 +31,27 @@ export class LocationController {
     private locationModel: Model<LocationDocument>,
   ) {}
 
+  //проверка токена, если его нет то запрос не будет отправлен и выведит ошибку
   @UseGuards(TokenAuthGuard)
-  @Post()
+  @Post(':id')
   async createLocation(
+    @Param('id') id: string,
     @Req() req: UserRequest,
     @Body() institutionDto: CreateLocationDto,
   ) {
+    const objectId = new mongoose.Types.ObjectId(id);
+
+    const existingLocation = await this.locationModel.findOne({
+      userId: req.user?._id,
+      locationId: objectId,
+    });
+
+    //проверяем существует ли уже местоположение
+    if (existingLocation) {
+      throw new BadRequestException('Локация заведение уже отмечены');
+    }
+
+    //создаем location
     const location = new this.locationModel({
       userId: req.user?._id,
       location: institutionDto.location,
@@ -53,9 +69,11 @@ export class LocationController {
     @Body() locationDto: CreateLocationDto,
   ) {
     const location = await this.locationModel.findById(id);
+    //Проверяем если id пользователя и id пользователя привязанный к location не равны то ошибка
     if (req.user._id.toString() !== location.userId.toString()) {
       throw new UnprocessableEntityException();
     }
+    //если все совпадает то ищем по id местоположение и изминяем его
     await this.locationModel.updateOne({ _id: id }, locationDto, { new: true });
     return this.locationModel.findById(id);
   }
@@ -64,9 +82,11 @@ export class LocationController {
   @Get(':id')
   async getLocation(@Param('id') id: string, @Req() req: UserRequest) {
     const getMyLocation = await this.locationModel.findById(id);
+    //сравниваем id user и id user привязанный к location, если проверка не прошла ошибка
     if (req.user._id.toString() !== getMyLocation.userId.toString()) {
       throw new UnprocessableEntityException();
     }
+    //иначе возвращаем результат
     return getMyLocation;
   }
 }
