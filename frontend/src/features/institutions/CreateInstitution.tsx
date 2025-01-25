@@ -12,7 +12,7 @@ import { Institution } from '../../types/types.Institution';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import { useAppDispatch } from '../../app/hooks.ts';
+import {useAppDispatch, useAppSelector} from '../../app/hooks.ts';
 import { createInstitution } from './institutionsThunk.ts';
 import axiosApi from '../../utils/axiosApi.ts';
 import Search from '../../components/Searchs/Search.tsx';
@@ -27,6 +27,7 @@ import instagram from '../../../public/instagram.png';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import { selectLocation } from '../maps/locationSlice.ts';
 
 
 interface searchTable {
@@ -36,6 +37,8 @@ interface searchTable {
 }
 
 const CreateInstitution = () => {
+  const locationSelect = useAppSelector(selectLocation);
+
   const [state, setState] = useState<Institution>({
     name: '',
     description: '',
@@ -394,11 +397,19 @@ const CreateInstitution = () => {
               error={state.address.trim() === '' && state.address.includes(' ')}
               helperText={
                 state.address.trim() === '' && state.address.includes(' ')
-                  ? 'Поле не должно быть пустым!'
+                  ? 'Поле не должно быть пустым или содержать только пробелы!'
                   : ''
               }
+              disabled={!locationSelect}
             />
-            <Tooltip title="Ваш город {Город}? Если нет то поменяйте регион или/и город" sx={{ border: '2px solid #000', ml: 1, borderRadius: 2 }}>
+            <Tooltip
+              title={
+                locationSelect ?
+                  `Ваше заведение в городе ${locationSelect.city}? Если нет то поменяйте регион или/и город в правом верхнем углу`
+                  : 'Добавьте регион и город. Это можно сделать в правом верхнем углу'
+              }
+              sx={{ border: '2px solid #000', ml: 1, borderRadius: 2 }}
+            >
               <PriorityHighIcon />
             </Tooltip>
           </div>

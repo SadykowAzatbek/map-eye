@@ -11,16 +11,16 @@ interface Props {
 const ProtectedRoute: FC<Props> = ({ children }) => {
   const user = useAppSelector(selectUser);
   const location = useLocation();
-  const isAdminPath = location.pathname.includes('/admin');
+  const isInstitutionCreatePath = location.pathname.includes('/institution/create');
 
   const isClient = user?.role === 'client';
   const isEmployee = user?.role !== 'client';
 
   if (!user) {
     return <Navigate to={appRoutes.login} />;
-  } else if (isClient && !isAdminPath) {
+  } else if (isClient && !isInstitutionCreatePath) {
     return children;
-  } else if (isEmployee && isAdminPath) return children;
+  } else if (isEmployee && isInstitutionCreatePath) return children;
   return <Navigate to={appRoutes.home} />;
 };
 

@@ -4,15 +4,12 @@ import { getMyLocationThunk } from './locationThunk.ts';
 import { LocationTypes } from '../../types/types.Location.ts';
 
 interface Location {
-  myLocation: LocationTypes;
+  myLocation: LocationTypes | null;
   isLoading: boolean;
 }
 
 const initialState: Location = {
-  myLocation: {
-    location: '',
-    city: '',
-  },
+  myLocation: null,
   isLoading: false,
 }
 

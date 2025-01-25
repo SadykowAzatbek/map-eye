@@ -12,5 +12,5 @@ export const getMyLocationThunk = createAsyncThunk<LocationTypes, string>(
     } catch (err) {
       console.error(err);
     }
-  }
-)
+  },
+);

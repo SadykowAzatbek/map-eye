@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import {
   AppBar,
   Box, Button,
@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import UserMenu from './UserMenu';
-import { useAppSelector } from '../../../app/hooks';
+import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 import { selectUser } from '../../../features/users/usersSlice';
 import { NavLink, useLocation } from 'react-router-dom';
 import DrawerMenu from './DrawerMenu';
@@ -19,6 +19,8 @@ import iconAddInstitutions from '../../../../public/createLocation.png';
 import iconSearch from '../../../../public/searchIcon.png';
 import '../../../component.css';
 import {selectLocation} from '../../../features/maps/locationSlice.ts';
+import { getMyLocationThunk } from '../../../features/maps/locationThunk.ts';
+import { LocationTypes } from '../../../types/types.Location.ts';
 
 const Link = styled(NavLink)({
   color: 'inherit',
@@ -29,18 +31,51 @@ const Link = styled(NavLink)({
 });
 
 const AppToolbar = () => {
+  const location = useLocation();
+  const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const locationSelect = useAppSelector(selectLocation);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [locationBlock, setLocationBlock] = useState(false);
-  const location = useLocation();
+  const [locationData, setLocationData] = useState<LocationTypes>({
+    location: '',
+    city: '',
+  });
 
   if (user === undefined) {
     return null;
   }
 
+  console.log(locationSelect);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const fetchUrl = async () => {
+      if (user?._id && locationSelect) {
+        dispatch(getMyLocationThunk(user._id));
+      }
+    };
+
+    void fetchUrl();
+  }, [dispatch]);
+
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
+  };
+
+  const handleRegionChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setLocationData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmitForm = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setLocationBlock(false);
   };
 
   return (
@@ -71,29 +106,31 @@ const AppToolbar = () => {
               </Link>
             </Typography>
             {location.pathname === '/institution/create' && (
-              <Box component="form" sx={{ display: "flex", alignItems: "center", mt: 1, mr: 2 }}>
+              <Box component="form" onSubmit={handleSubmitForm} sx={{ display: "flex", alignItems: "center", mt: 1, mr: 2 }}>
                 {locationBlock ? (
                   <>
                     <TextField
                       label="Регион"
-                      name="region"
+                      name="location"
                       type="text"
-                      value={locationSelect.location}
+                      value={locationData.location}
+                      onChange={handleRegionChange}
                       sx={{ background: '#fff' }}
                     />
                     <TextField
                       label="Город"
                       name="city"
                       type="text"
-                      value={locationSelect.city}
+                      value={locationData.city}
+                      onChange={handleRegionChange}
                       sx={{ background: '#fff' }}
+                      disabled={locationData.location === ''}
                     />
                     <Button type="submit">сохранить</Button>
                   </>
                 ) : (
-                  <Typography component="div" className="main-nav" onClick={() => setLocationBlock(true)} sx={{ cursor: "default", p: 1 }}>
-                    {/*изменить на Link и отправлять в профиль редактирование*/}
-                    Изменить (регион, город)
+                  <Typography component="div" className="main-nav" onClick={() => setLocationBlock(true)} sx={{ cursor: "pointer", p: 1 }}>
+                    {!locationSelect ? 'Добавить (регион, город)' : 'Изменить (регион, город)'}
                   </Typography>
                 )}
               </Box>
