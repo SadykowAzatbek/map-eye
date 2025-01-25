@@ -21,6 +21,7 @@ import '../../../component.css';
 import { selectLocation } from '../../../features/maps/locationSlice.ts';
 import { getMyLocationThunk } from '../../../features/maps/locationThunk.ts';
 import { LocationTypes } from '../../../types/types.Location.ts';
+import axiosApi from '../../../utils/axiosApi.ts';
 
 const Link = styled(NavLink)({
   color: 'inherit',
@@ -34,13 +35,15 @@ const AppToolbar = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
-  const locationSelect = useAppSelector(selectLocation);
+  const locationSelect = useAppSelector(selectLocation); //получем местоположение
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [locationBlock, setLocationBlock] = useState(false);
+  const [locationBlock, setLocationBlock] = useState(false); //открывает и закрывает "Добавить (регион, город)"
   const [locationData, setLocationData] = useState<LocationTypes>({
     location: '',
     city: '',
   });
+
+  const [region, setRegion] = useState();
 
   if (user === undefined) {
     return null;
@@ -71,6 +74,24 @@ const AppToolbar = () => {
       [name]: value,
     }));
   };
+
+  const getCountry = async (query: string) => {
+    const response = await axiosApi.get<{ name: { common: string } }[]>(`https://restcountries.com/v3.1/name/${query}`);
+    const filterData = response.data
+      .filter(country => country.name.common.includes(query)) // Получаем страны с похожими начальными названиями
+      .slice(0, 9); // Ограничиваем результат массива до 9
+    console.log(filterData);
+  };
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const regions = async () => {
+      if (locationData.location) {
+        await getCountry(locationData.location);
+      }
+    }
+    void regions();
+  }, [locationData.location]);
 
   const handleSubmitForm = async (e: FormEvent) => {
     e.preventDefault();
@@ -110,7 +131,7 @@ const AppToolbar = () => {
                 {locationBlock ? (
                   <>
                     <TextField
-                      label="Регион"
+                      label="Страна"
                       name="location"
                       type="text"
                       value={locationData.location}
