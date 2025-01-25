@@ -1,4 +1,4 @@
-import {ChangeEvent, FormEvent, useEffect, useState} from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import {
   AppBar,
   Box, Button,
@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import UserMenu from './UserMenu';
-import {useAppDispatch, useAppSelector} from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectUser } from '../../../features/users/usersSlice';
 import { NavLink, useLocation } from 'react-router-dom';
 import DrawerMenu from './DrawerMenu';
@@ -18,7 +18,7 @@ import { appRoutes } from '../../../utils/constants.ts';
 import iconAddInstitutions from '../../../../public/createLocation.png';
 import iconSearch from '../../../../public/searchIcon.png';
 import '../../../component.css';
-import {selectLocation} from '../../../features/maps/locationSlice.ts';
+import { selectLocation } from '../../../features/maps/locationSlice.ts';
 import { getMyLocationThunk } from '../../../features/maps/locationThunk.ts';
 import { LocationTypes } from '../../../types/types.Location.ts';
 

@@ -14,3 +14,14 @@ export const getMyLocationThunk = createAsyncThunk<LocationTypes, string>(
     }
   },
 );
+
+export const createMyLocationThunk = createAsyncThunk<void, { locationData: LocationTypes, locationId: string }>(
+  'post/location',
+  async ({ locationData, locationId })=> {
+    try {
+      await axiosApi.post(serverRoute.location + locationId, locationData);
+    } catch (err) {
+      console.error(err);
+    }
+  },
+);
