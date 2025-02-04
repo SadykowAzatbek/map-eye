@@ -33,17 +33,17 @@ export class LocationController {
 
   //проверка токена, если его нет то запрос не будет отправлен и выведит ошибку
   @UseGuards(TokenAuthGuard)
-  @Post(':id')
+  @Post(':id?')
   async createLocation(
-    @Param('id') id: string,
+    @Param('id') id: string | null,
     @Req() req: UserRequest,
     @Body() institutionDto: CreateLocationDto,
   ) {
     const objectId = new mongoose.Types.ObjectId(id);
 
     const existingLocation = await this.locationModel.findOne({
+      _id: objectId,
       userId: req.user?._id,
-      locationId: objectId,
     });
 
     //проверяем существует ли уже местоположение
@@ -73,7 +73,7 @@ export class LocationController {
     if (req.user._id.toString() !== location.userId.toString()) {
       throw new UnprocessableEntityException();
     }
-    //если все совпадает то ищем по id местоположение и изминяем его
+    //если все совпадает то ищем по id местоположение и изменяем его
     await this.locationModel.updateOne({ _id: id }, locationDto, { new: true });
     return this.locationModel.findById(id);
   }
@@ -81,7 +81,10 @@ export class LocationController {
   @UseGuards(TokenAuthGuard)
   @Get(':id')
   async getLocation(@Param('id') id: string, @Req() req: UserRequest) {
-    const getMyLocation = await this.locationModel.findById(id);
+    const getMyLocation = await this.locationModel.findOne({ userId: id });
+    if (!getMyLocation) {
+      return null;
+    }
     //сравниваем id user и id user привязанный к location, если проверка не прошла ошибка
     if (req.user._id.toString() !== getMyLocation.userId.toString()) {
       throw new UnprocessableEntityException();

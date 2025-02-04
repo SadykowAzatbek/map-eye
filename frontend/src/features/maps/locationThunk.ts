@@ -15,11 +15,30 @@ export const getMyLocationThunk = createAsyncThunk<LocationTypes, string>(
   },
 );
 
-export const createMyLocationThunk = createAsyncThunk<void, { locationData: LocationTypes, locationId: string }>(
+export const createMyLocationThunk = createAsyncThunk<
+  void,
+  { locationData: LocationTypes; locationId: string | null }
+>(
   'post/location',
-  async ({ locationData, locationId })=> {
+  async ({ locationData, locationId }) => {
     try {
-      await axiosApi.post(serverRoute.location + locationId, locationData);
+      // если locationId не null то запрос с locationId иначе без него
+      const url = locationId ? `${serverRoute.location}${locationId}` : serverRoute.location;
+      await axiosApi.post(url, locationData);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+);
+
+export const changeMyLocationThunk = createAsyncThunk<
+  void,
+  { locationData: LocationTypes; locId: string; }
+>(
+  'change/location',
+  async ({ locationData, locId }) => {
+    try {
+      await axiosApi.patch(serverRoute.location + locId, locationData);
     } catch (err) {
       console.error(err);
     }
