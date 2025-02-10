@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import {
   AppBar,
   Box, Button,
+  CircularProgress,
   CssBaseline,
   Grid,
   styled, TextField,
@@ -18,7 +19,11 @@ import { appRoutes } from '../../../utils/constants.ts';
 import iconAddInstitutions from '../../../../public/createLocation.png';
 import iconSearch from '../../../../public/searchIcon.png';
 import '../../../component.css';
-import { selectLocation, selectLocationLoading } from '../../../features/maps/locationSlice.ts';
+import {
+  selectLocation,
+  selectLocationLoading,
+  selectUpdateLocationLoading
+} from '../../../features/maps/locationSlice.ts';
 import { LocationTypes } from '../../../types/types.Location.ts';
 import axiosApi from '../../../utils/axiosApi.ts';
 import {
@@ -26,6 +31,7 @@ import {
   createMyLocationThunk,
   getMyLocationThunk
 } from '../../../features/maps/locationThunk.ts';
+import Search from '../../Searchs/Search.tsx';
 
 const Link = styled(NavLink)({
   color: 'inherit',
@@ -50,6 +56,7 @@ const AppToolbar = () => {
   const user = useAppSelector(selectUser);
   const locationSelect = useAppSelector(selectLocation); //получем местоположение
   const isLoading = useAppSelector(selectLocationLoading);
+  const isLocationUpdateLoading = useAppSelector(selectUpdateLocationLoading);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [locationBlock, setLocationBlock] = useState(false); //открывает и закрывает "Добавить (регион, город)"
   const [locationData, setLocationData] = useState<LocationTypes>({
@@ -57,6 +64,7 @@ const AppToolbar = () => {
     city: '',
   });
   const [region, setRegion] = useState<countryTypes[]>([]);
+  const [isFocused, setIsFocused] = useState(false);
 
   console.log(region);
   console.log(locationSelect);
@@ -90,21 +98,29 @@ const AppToolbar = () => {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
+    // Провереям если есть пользователь то отправляется запрос
+    if (user) {
+      dispatch(getMyLocationThunk(user._id));
+    }
+  }, [user, dispatch]);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
     const regions = async () => {
-      // Провереям если есть пользователь то отправляется запрос
-      if (user) {
-        dispatch(getMyLocationThunk(user._id));
-      }
-      // При изминении ключа location выполняется функция getCountry
+      // При изминении ключа location выполняется функция getCountry для получении 10 стран
       if (locationData.location) {
         await getCountry(locationData.location);
+
+        setLocationData((prevState) => ({
+          ...prevState,
+          city: '',
+        }));
       }
-    }
+    };
     void regions();
-  }, [user, dispatch]); // убрал locationData из зависимостей, чтобы при изменении состояние не отправлял вновь запросы на сервер
+  }, [locationData.location, dispatch]);
 
   const handleCreateLocation = () => {
-
     // Если locationSelect равен null то отправляется запрос на создание местоположении
     if (!locationSelect) {
       dispatch(createMyLocationThunk({ locationData: locationData, locationId: locationSelect }));
@@ -114,13 +130,27 @@ const AppToolbar = () => {
     }
   };
 
+  // Задает название для location после нажатие на одну из списков стран
+  const onClickCountry = (value: string) => {
+    setLocationData((prevState) => ({
+      ...prevState,
+      location: value,
+    }));
+  };
+
   const handleSubmitForm = async (e: FormEvent) => {
     e.preventDefault();
 
-    setLocationBlock(false);
     if (locationData._id) {
       dispatch(changeMyLocationThunk({ locationData: locationData, locId: locationData._id }));
     }
+    setLocationBlock(false);
+
+    setTimeout(() => {
+      if (user) {
+        dispatch(getMyLocationThunk(user._id));
+      }
+    }, 500);
   };
 
   return (
@@ -153,26 +183,48 @@ const AppToolbar = () => {
             {location.pathname === '/institution/create' && (
               <Box component="form" onSubmit={handleSubmitForm} sx={{ display: "flex", alignItems: "center", mt: 1, mr: 2 }}>
                 {locationBlock ? (
-                  <>
-                    <TextField
-                      label="Страна"
-                      name="location"
-                      type="text"
-                      value={locationData.location}
-                      onChange={handleRegionChange}
-                      sx={{ background: '#fff' }}
-                    />
-                    <TextField
-                      label="Город"
-                      name="city"
-                      type="text"
-                      value={locationData.city}
-                      onChange={handleRegionChange}
-                      sx={{ background: '#fff' }}
-                      disabled={locationData.location === ''}
-                    />
-                    <Button type="submit">сохранить</Button>
-                  </>
+                  <div style={{ display: "flex" }}>
+                    <div style={{ position: "relative" }}>
+                      <TextField
+                        label="Страна"
+                        name="location"
+                        type="text"
+                        value={isLoading ? 'Загрузка...' : locationData.location}
+                        onChange={handleRegionChange}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        disabled={isLoading}
+                        sx={{background: '#fff' }}
+                      />
+                      {isFocused && (
+                        <div style={{position: 'absolute', width: '100%', background: '#fff'}}>
+                          {region.map((elem, i) => (
+                            elem.name.common !== locationData.location &&
+                            <Search
+                              key={i}
+                              displayName={elem.name.common}
+                              onClick={() => onClickCountry(elem.name.common)}
+                              image={elem.flags.svg}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <TextField
+                        label="Город"
+                        name="city"
+                        type="text"
+                        value={isLoading ? 'Загрузка...' : locationData.city}
+                        onChange={handleRegionChange}
+                        sx={{background: '#fff'}}
+                        disabled={isLoading || locationData.location === ''}
+                      />
+                    </div>
+                    <Button type="submit" disabled={isLocationUpdateLoading}>
+                      сохранить {isLocationUpdateLoading && (<CircularProgress sx={{ ml: 1 }} />)}
+                    </Button>
+                  </div>
                 ) : (
                   <Typography
                     component="div"
@@ -183,7 +235,7 @@ const AppToolbar = () => {
                     }}
                     sx={{ cursor: "pointer", p: 1 }}
                   >
-                    {!locationSelect ? 'Добавить (регион, город)' : 'Изменить (регион, город)'}
+                    {!locationSelect ? 'Добавить (регион, город)' : 'Изменить (страна, город)'}
                   </Typography>
                 )}
               </Box>

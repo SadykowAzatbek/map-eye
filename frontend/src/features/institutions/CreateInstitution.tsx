@@ -27,7 +27,7 @@ import instagram from '../../../public/instagram.png';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import { selectLocation } from '../maps/locationSlice.ts';
+import {selectLocation, selectUpdateLocationLoading} from '../maps/locationSlice.ts';
 
 
 interface searchTable {
@@ -38,6 +38,7 @@ interface searchTable {
 
 const CreateInstitution = () => {
   const locationSelect = useAppSelector(selectLocation);
+  const isLocationUpdateLoading = useAppSelector(selectUpdateLocationLoading);
 
   const [state, setState] = useState<Institution>({
     name: '',
@@ -170,7 +171,7 @@ const CreateInstitution = () => {
     if (state.address) {
       debouncedSearchStreet(state.address);
     }
-  }, [state.address]);
+  }, [state.address, debouncedSearchStreet]);
 
   const [everyoneTime, setEveryoneTime] = useState({
     start: dayjs('00:00', 'HH:mm'),
@@ -400,13 +401,13 @@ const CreateInstitution = () => {
                   ? 'Поле не должно быть пустым или содержать только пробелы!'
                   : ''
               }
-              disabled={!locationSelect}
+              disabled={!locationSelect || locationSelect?.city === '' || isLocationUpdateLoading}
             />
             <Tooltip
               title={
-                locationSelect ?
-                  `Ваше заведение в городе ${locationSelect.city}? Если нет то поменяйте регион или/и город в правом верхнем углу`
-                  : 'Добавьте регион и город. Это можно сделать в правом верхнем углу'
+                locationSelect && locationSelect.city ?
+                  `Ваше заведение в городе ${locationSelect.city}? Если нет, то поменяйте страну или/и город в правом верхнем углу`
+                  : 'Добавьте страну или/и город. Это можно сделать в правом верхнем углу'
               }
               sx={{ border: '2px solid #000', ml: 1, borderRadius: 2 }}
             >
