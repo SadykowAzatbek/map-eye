@@ -56,6 +56,7 @@ export class LocationController {
       userId: req.user?._id,
       location: institutionDto.location,
       city: institutionDto.city,
+      altSpellings: institutionDto.altSpellings,
     });
     await location.save();
     return location;

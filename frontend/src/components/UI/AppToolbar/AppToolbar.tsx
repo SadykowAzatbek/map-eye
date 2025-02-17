@@ -3,7 +3,7 @@ import {
   AppBar,
   Box, Button,
   CircularProgress,
-  CssBaseline,
+  CssBaseline, debounce,
   Grid,
   styled, TextField,
   Toolbar,
@@ -42,6 +42,7 @@ const Link = styled(NavLink)({
 });
 
 type countryTypes = {
+  altSpellings: [];
   name: {
     common: string;
   };
@@ -62,12 +63,17 @@ const AppToolbar = () => {
   const [locationData, setLocationData] = useState<LocationTypes>({
     location: '',
     city: '',
+    altSpellings: [],
+    svg: '',
   });
   const [region, setRegion] = useState<countryTypes[]>([]);
   const [isFocused, setIsFocused] = useState(false);
+  const [cities, setCities] = useState<{ name: string }[]>([]);
+  const [isFocusedCity, setIsFocusedCity] = useState(false);
 
-  console.log(region);
-  console.log(locationSelect);
+  console.log('Страны ', region);
+  console.log('То что получили: ', locationSelect);
+  console.log('Города: ', cities);
 
   if (user === undefined) {
     return null;
@@ -120,6 +126,27 @@ const AppToolbar = () => {
     void regions();
   }, [locationData.location, dispatch]);
 
+  const getCitiesList = async (query: string) => {
+    const response = await axiosApi.get(
+      `https://nominatim.openstreetmap.org/search?q=${query}&countrycodes=${locationData.altSpellings[0]}&format=json`
+    );
+
+    const cities = response.data.filter((city: { addresstype: string }) => city.addresstype === 'city');
+
+    setCities(cities);
+  };
+
+  const debouncedCityList = debounce(getCitiesList, 10); // запрос не будет отправлен пока пользователь вводит текст
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const fetchUrl = async () => {
+      if (locationData.location) await debouncedCityList(locationData.city);
+    };
+
+    void fetchUrl();
+  }, [locationData]);
+
   const handleCreateLocation = () => {
     // Если locationSelect равен null то отправляется запрос на создание местоположении
     if (!locationSelect) {
@@ -131,10 +158,19 @@ const AppToolbar = () => {
   };
 
   // Задает название для location после нажатие на одну из списков стран
-  const onClickCountry = (value: string) => {
+  const onClickCountry = (value: string, countryCode: [], img: string) => {
     setLocationData((prevState) => ({
       ...prevState,
       location: value,
+      altSpellings: countryCode,
+      svg: img,
+    }));
+  };
+
+  const onClickCity = (value: string) => {
+    setLocationData((prevState) => ({
+      ...prevState,
+      city: value,
     }));
   };
 
@@ -196,14 +232,17 @@ const AppToolbar = () => {
                         disabled={isLoading}
                         sx={{background: '#fff' }}
                       />
+                      <div style={{ position: "absolute", right: "5px" }}>
+                        <img src={locationData.svg} alt={locationData.location} />
+                      </div>
                       {isFocused && (
-                        <div style={{position: 'absolute', width: '100%', background: '#fff'}}>
+                        <div style={{position: "absolute", width: "100%", background: "#fff"}}>
                           {region.map((elem, i) => (
                             elem.name.common !== locationData.location &&
                             <Search
                               key={i}
                               displayName={elem.name.common}
-                              onClick={() => onClickCountry(elem.name.common)}
+                              onClick={() => onClickCountry(elem.name.common, elem.altSpellings, elem.flags.svg)}
                               image={elem.flags.svg}
                             />
                           ))}
@@ -211,18 +250,36 @@ const AppToolbar = () => {
                       )}
                     </div>
                     <div>
-                      <TextField
-                        label="Город"
-                        name="city"
-                        type="text"
-                        value={isLoading ? 'Загрузка...' : locationData.city}
-                        onChange={handleRegionChange}
-                        sx={{background: '#fff'}}
-                        disabled={isLoading || locationData.location === ''}
-                      />
+                      <div style={{ display: "flex" }}>
+                        <div style={{ position: "relative" }}>
+                          <TextField
+                            label="Город"
+                            name="city"
+                            type="text"
+                            value={isLoading ? 'Загрузка...' : locationData.city}
+                            onChange={handleRegionChange}
+                            onFocus={() => setIsFocusedCity(true)}
+                            onBlur={() => setIsFocusedCity(false)}
+                            sx={{background: '#fff'}}
+                            disabled={isLoading || locationData.location === ''}
+                          />
+                          {isFocusedCity && (
+                            <div style={{position: 'absolute', width: '100%', background: '#fff'}}>
+                              {cities.map((elem, i) => (
+                                elem.name !== locationData.city &&
+                                <Search
+                                  key={i}
+                                  displayName={elem.name}
+                                  onClick={() => onClickCity(elem.name)}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     <Button type="submit" disabled={isLocationUpdateLoading}>
-                      сохранить {isLocationUpdateLoading && (<CircularProgress sx={{ ml: 1 }} />)}
+                      сохранить {isLocationUpdateLoading && (<CircularProgress sx={{ml: 1}}/>)}
                     </Button>
                   </div>
                 ) : (

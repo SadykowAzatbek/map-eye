@@ -14,6 +14,9 @@ export class Location {
 
   @Prop()
   city: string;
+
+  @Prop()
+  altSpellings: string[];
 }
 
 export const LocationSchema = SchemaFactory.createForClass(Location);

@@ -143,10 +143,11 @@ const CreateInstitution = () => {
   console.log(state);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
 
+  // Функция для получении списка улиц
   const searchStreet = async (query: string) => {
     const response = await axiosApi.get(`https://nominatim.openstreetmap.org/search?q=${query}&format=json`);
     const filterData = response.data
-      .filter((elem) => elem.addresstype === 'building')
+      .filter((elem: { addresstype: string }) => elem.addresstype === 'building')
       .map((elem) => ({
         displayName: elem.display_name, // Переименование ключа
         lat: elem.lat,
@@ -168,9 +169,11 @@ const CreateInstitution = () => {
   const debouncedSearchStreet = debounce(searchStreet, 500);
 
   useEffect(() => {
-    if (state.address) {
-      debouncedSearchStreet(state.address);
-    }
+    const fetchUrl = async () => {
+      if (state.address) await debouncedSearchStreet(state.address);
+    };
+
+    void fetchUrl();
   }, [state.address, debouncedSearchStreet]);
 
   const [everyoneTime, setEveryoneTime] = useState({
