@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import {ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState} from 'react';
 import {
   AppBar,
   Box, Button,
@@ -64,7 +64,6 @@ const AppToolbar = () => {
     location: '',
     city: '',
     altSpellings: [],
-    svg: '',
   });
   const [region, setRegion] = useState<countryTypes[]>([]);
   const [isFocused, setIsFocused] = useState(false);
@@ -74,6 +73,48 @@ const AppToolbar = () => {
   console.log('Страны ', region);
   console.log('То что получили: ', locationSelect);
   console.log('Города: ', cities);
+
+  useEffect(() => {
+    // Провереям если есть пользователь то отправляется запрос
+    if (user) {
+      dispatch(getMyLocationThunk(user._id));
+    }
+  }, [user, dispatch]);
+
+  useEffect(() => {
+    const regions = async () => {
+      // При изминении ключа location выполняется функция getCountry для получении 10 стран
+      if (locationData.location) {
+        await getCountry(locationData.location);
+
+        setLocationData((prevState) => ({
+          ...prevState,
+          city: '',
+        }));
+      }
+    };
+    void regions();
+  }, [locationData.location, dispatch]);
+
+  const getCitiesList = useCallback(async (query: string) => {
+    const response = await axiosApi.get(
+      `https://nominatim.openstreetmap.org/search?q=${query}&countrycodes=${locationData.altSpellings[0]}&format=json`
+    );
+
+    const cities = response.data.filter((city: { addresstype: string }) => city.addresstype === 'city' || city.addresstype === 'town');
+
+    setCities(cities);
+  }, [locationData, setCities]);
+
+  const debouncedCityList = useRef(debounce(getCitiesList, 300)).current;
+
+  useEffect(() => {
+    const fetchUrl = async () => {
+      if (locationData.city) await debouncedCityList(locationData.city);
+    };
+
+    void fetchUrl();
+  }, [locationData.city]);
 
   if (user === undefined) {
     return null;
@@ -102,51 +143,6 @@ const AppToolbar = () => {
     setRegion(filterData); // Задаем состояние
   };
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    // Провереям если есть пользователь то отправляется запрос
-    if (user) {
-      dispatch(getMyLocationThunk(user._id));
-    }
-  }, [user, dispatch]);
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    const regions = async () => {
-      // При изминении ключа location выполняется функция getCountry для получении 10 стран
-      if (locationData.location) {
-        await getCountry(locationData.location);
-
-        setLocationData((prevState) => ({
-          ...prevState,
-          city: '',
-        }));
-      }
-    };
-    void regions();
-  }, [locationData.location, dispatch]);
-
-  const getCitiesList = async (query: string) => {
-    const response = await axiosApi.get(
-      `https://nominatim.openstreetmap.org/search?q=${query}&countrycodes=${locationData.altSpellings[0]}&format=json`
-    );
-
-    const cities = response.data.filter((city: { addresstype: string }) => city.addresstype === 'city');
-
-    setCities(cities);
-  };
-
-  const debouncedCityList = debounce(getCitiesList, 10); // запрос не будет отправлен пока пользователь вводит текст
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    const fetchUrl = async () => {
-      if (locationData.location) await debouncedCityList(locationData.city);
-    };
-
-    void fetchUrl();
-  }, [locationData]);
-
   const handleCreateLocation = () => {
     // Если locationSelect равен null то отправляется запрос на создание местоположении
     if (!locationSelect) {
@@ -158,12 +154,11 @@ const AppToolbar = () => {
   };
 
   // Задает название для location после нажатие на одну из списков стран
-  const onClickCountry = (value: string, countryCode: [], img: string) => {
+  const onClickCountry = (value: string, countryCode: []) => {
     setLocationData((prevState) => ({
       ...prevState,
       location: value,
       altSpellings: countryCode,
-      svg: img,
     }));
   };
 
@@ -232,9 +227,6 @@ const AppToolbar = () => {
                         disabled={isLoading}
                         sx={{background: '#fff' }}
                       />
-                      <div style={{ position: "absolute", right: "5px" }}>
-                        <img src={locationData.svg} alt={locationData.location} />
-                      </div>
                       {isFocused && (
                         <div style={{position: "absolute", width: "100%", background: "#fff"}}>
                           {region.map((elem, i) => (
@@ -242,7 +234,7 @@ const AppToolbar = () => {
                             <Search
                               key={i}
                               displayName={elem.name.common}
-                              onClick={() => onClickCountry(elem.name.common, elem.altSpellings, elem.flags.svg)}
+                              onClick={() => onClickCountry(elem.name.common, elem.altSpellings)}
                               image={elem.flags.svg}
                             />
                           ))}

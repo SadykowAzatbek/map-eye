@@ -7,7 +7,7 @@ import {
   Box,
   debounce, Tooltip,
 } from '@mui/material';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import {ChangeEvent, FormEvent, useCallback, useEffect, useState} from 'react';
 import { Institution } from '../../types/types.Institution';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -144,12 +144,17 @@ const CreateInstitution = () => {
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
 
   // Функция для получении списка улиц
-  const searchStreet = async (query: string) => {
-    const response = await axiosApi.get(`https://nominatim.openstreetmap.org/search?q=${query}&format=json`);
+  const searchStreet = useCallback(async (query: string) => {
+    if (!locationSelect) {
+      return;
+    }
+    const response = await axiosApi.get(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(`${locationSelect.location},${locationSelect.city},${query}`)}&format=json`
+    );
     const filterData = response.data
       .filter((elem: { addresstype: string }) => elem.addresstype === 'building')
       .map((elem) => ({
-        displayName: elem.display_name, // Переименование ключа
+        displayName: elem.display_name,
         lat: elem.lat,
         lon: elem.lon,
       }));
@@ -164,9 +169,10 @@ const CreateInstitution = () => {
       }));
     }
     setSearchResult(filterData);
-  };
+  }, [locationSelect, setState, setSearchResult]);
 
-  const debouncedSearchStreet = debounce(searchStreet, 500);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSearchStreet = useCallback(debounce(searchStreet, 300), [searchStreet]);
 
   useEffect(() => {
     const fetchUrl = async () => {
@@ -174,7 +180,7 @@ const CreateInstitution = () => {
     };
 
     void fetchUrl();
-  }, [state.address, debouncedSearchStreet]);
+  }, [state.address]);
 
   const [everyoneTime, setEveryoneTime] = useState({
     start: dayjs('00:00', 'HH:mm'),
