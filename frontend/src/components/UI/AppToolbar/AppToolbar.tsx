@@ -81,11 +81,23 @@ const AppToolbar = () => {
     }
   }, [user, dispatch]);
 
+  // Callback для получении до 10 стран по первым введенным буквам
+  const getCountry = useCallback(async (query: string) => {
+    const response = await axiosApi.get<countryTypes[]>(`https://restcountries.com/v3.1/name/${query}`);
+    const filterData = response.data
+      .filter(country => country.name.common.includes(query)) // Получаем страны с похожими начальными названиями
+      .slice(0, 9); // Ограничиваем результат массива до 9
+
+    setRegion(filterData); // Задаем состояние
+  }, [setRegion]);
+
+  const debounceGetCountry = useRef(debounce(getCountry, 300)).current;
+
   useEffect(() => {
     const regions = async () => {
       // При изминении ключа location выполняется функция getCountry для получении 10 стран
       if (locationData.location) {
-        await getCountry(locationData.location);
+        await debounceGetCountry(locationData.location);
 
         setLocationData((prevState) => ({
           ...prevState,
@@ -131,16 +143,6 @@ const AppToolbar = () => {
       ...prevState,
       [name]: value,
     }));
-  };
-
-  // Функция для получении до 10 стран по первым введенным буквам
-  const getCountry = async (query: string) => {
-    const response = await axiosApi.get<countryTypes[]>(`https://restcountries.com/v3.1/name/${query}`);
-    const filterData = response.data
-      .filter(country => country.name.common.includes(query)) // Получаем страны с похожими начальными названиями
-      .slice(0, 9); // Ограничиваем результат массива до 9
-
-    setRegion(filterData); // Задаем состояние
   };
 
   const handleCreateLocation = () => {
