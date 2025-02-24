@@ -73,6 +73,7 @@ const AppToolbar = () => {
   console.log('Страны ', region);
   console.log('То что получили: ', locationSelect);
   console.log('Города: ', cities);
+  console.log('Общие данные ', locationData);
 
   useEffect(() => {
     // Провереям если есть пользователь то отправляется запрос
@@ -108,10 +109,16 @@ const AppToolbar = () => {
     void regions();
   }, [locationData.location, dispatch]);
 
-  const getCitiesList = useCallback(async (query: string) => {
+  const getCitiesList = useCallback(async (query: string, altSpelling: string) => {
     const response = await axiosApi.get(
-      `https://nominatim.openstreetmap.org/search?q=${query}&countrycodes=${locationData.altSpellings[0]}&format=json`
+      `https://nominatim.openstreetmap.org/search?q=${query}&countrycodes=${altSpelling}&format=json`
     );
+
+    if (locationData.altSpellings[0] === undefined) {
+      console.error('BRUH BRO NOT FOUND LOL');
+    }
+
+    console.log(locationData.altSpellings[0]);
 
     const cities = response.data.filter((city: { addresstype: string }) => city.addresstype === 'city' || city.addresstype === 'town');
 
@@ -122,7 +129,7 @@ const AppToolbar = () => {
 
   useEffect(() => {
     const fetchUrl = async () => {
-      if (locationData.city) await debouncedCityList(locationData.city);
+      if (locationData.city) await debouncedCityList(locationData.city, locationData.altSpellings[0]);
     };
 
     void fetchUrl();
@@ -149,7 +156,7 @@ const AppToolbar = () => {
     // Если locationSelect равен null то отправляется запрос на создание местоположении
     if (!locationSelect) {
       dispatch(createMyLocationThunk({ locationData: locationData, locationId: locationSelect }));
-      // Иначе  задать новое состояние
+      // Иначе задать новое состояние
     } else {
       setLocationData(locationSelect);
     }
@@ -224,9 +231,14 @@ const AppToolbar = () => {
                         type="text"
                         value={isLoading ? 'Загрузка...' : locationData.location}
                         onChange={handleRegionChange}
-                        onFocus={() => setIsFocused(true)}
+                        onFocus={() => setIsFocused(true)} // если в фокусе
                         onBlur={() => setIsFocused(false)}
                         disabled={isLoading}
+                        error={!region.some(item => item.name.common.toLowerCase().includes(locationData.location.toLowerCase()))}
+                        helperText={
+                          !region.some(item => item.name.common.toLowerCase().includes(locationData.location.toLowerCase())) &&
+                          'Страна не выбрана'
+                        }
                         sx={{background: '#fff' }}
                       />
                       {isFocused && (
@@ -256,6 +268,11 @@ const AppToolbar = () => {
                             onBlur={() => setIsFocusedCity(false)}
                             sx={{background: '#fff'}}
                             disabled={isLoading || locationData.location === ''}
+                            error={!cities.some(item => item.name.toLowerCase().includes(locationData.city.toLocaleLowerCase()))}
+                            helperText={
+                              !cities.some(item => item.name.toLowerCase().includes(locationData.city.toLocaleLowerCase())) &&
+                              'введите название города'
+                            }
                           />
                           {isFocusedCity && (
                             <div style={{position: 'absolute', width: '100%', background: '#fff'}}>
@@ -272,7 +289,18 @@ const AppToolbar = () => {
                         </div>
                       </div>
                     </div>
-                    <Button type="submit" disabled={isLocationUpdateLoading}>
+                    <Button
+                      type="submit"
+                      disabled={
+                        isLocationUpdateLoading ||
+                        locationData.location === '' ||
+                        region.length === 0 ||
+                        !region.some(item => item.name.common.toLowerCase().includes(locationData.location.toLowerCase())) || // хотя бы 1 из списка должно совпадать
+                        locationData.city === '' ||
+                        cities.length === 0 ||
+                        !cities.some(item => item.name.toLowerCase().includes(locationData.city.toLocaleLowerCase())) // точно так же как и с странами
+                      }
+                    >
                       сохранить {isLocationUpdateLoading && (<CircularProgress sx={{ml: 1}}/>)}
                     </Button>
                   </div>

@@ -7,7 +7,7 @@ import {
   Box,
   debounce, Tooltip,
 } from '@mui/material';
-import {ChangeEvent, FormEvent, useCallback, useEffect, useState} from 'react';
+import {ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState} from 'react';
 import { Institution } from '../../types/types.Institution';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -171,8 +171,7 @@ const CreateInstitution = () => {
     setSearchResult(filterData);
   }, [locationSelect, setState, setSearchResult]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSearchStreet = useCallback(debounce(searchStreet, 300), [searchStreet]);
+  const debouncedSearchStreet = useRef(debounce(searchStreet, 300)).current;
 
   useEffect(() => {
     const fetchUrl = async () => {
@@ -213,7 +212,7 @@ const CreateInstitution = () => {
     setState((prevState) => ({
       ...prevState,
       schedule: prevState.schedule.map((item, i) =>
-        i === index ? { ...item, open: !item.open } : item //находит по индексу и изменяет содержимое ключа open на противоположное
+        i === index ? { ...item, open: !item.open } : item // находит по индексу и изменяет содержимое ключа open на противоположное
       ),
     }));
   };
