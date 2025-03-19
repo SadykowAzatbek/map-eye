@@ -104,6 +104,8 @@ const AppToolbar = () => {
           ...prevState,
           city: '',
         }));
+
+        setCities((prevState) => (prevState.slice(0, 0)));
       }
     };
     void regions();
@@ -113,12 +115,6 @@ const AppToolbar = () => {
     const response = await axiosApi.get(
       `https://nominatim.openstreetmap.org/search?q=${query}&countrycodes=${altSpelling}&format=json`
     );
-
-    if (locationData.altSpellings[0] === undefined) {
-      console.error('BRUH BRO NOT FOUND LOL');
-    }
-
-    console.log(locationData.altSpellings[0]);
 
     const cities = response.data.filter((city: { addresstype: string }) => city.addresstype === 'city' || city.addresstype === 'town');
 

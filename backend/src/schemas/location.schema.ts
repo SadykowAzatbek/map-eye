@@ -9,10 +9,10 @@ export class Location {
   })
   userId: mongooseSchema.Types.ObjectId;
 
-  @Prop()
+  @Prop({ required: true })
   location: string;
 
-  @Prop()
+  @Prop({ required: true })
   city: string;
 
   @Prop()

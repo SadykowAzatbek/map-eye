@@ -144,12 +144,9 @@ const CreateInstitution = () => {
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
 
   // Функция для получении списка улиц
-  const searchStreet = useCallback(async (query: string) => {
-    if (!locationSelect) {
-      return;
-    }
+  const searchStreet = useCallback(async (location: string, city: string, address: string) => {
     const response = await axiosApi.get(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(`${locationSelect.location},${locationSelect.city},${query}`)}&format=json`
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(`${location},${city},${address}`)}&format=json`
     );
     const filterData = response.data
       .filter((elem: { addresstype: string }) => elem.addresstype === 'building')
@@ -175,11 +172,13 @@ const CreateInstitution = () => {
 
   useEffect(() => {
     const fetchUrl = async () => {
-      if (state.address) await debouncedSearchStreet(state.address);
+      if (locationSelect) {
+        if (state.address) await debouncedSearchStreet(locationSelect.location, locationSelect.city, state.address);
+      }
     };
 
     void fetchUrl();
-  }, [state.address]);
+  }, [locationSelect, state.address]);
 
   const [everyoneTime, setEveryoneTime] = useState({
     start: dayjs('00:00', 'HH:mm'),
@@ -233,10 +232,12 @@ const CreateInstitution = () => {
     }
   };
 
-  const onClickAddress = (value: string) => {
+  // При нажатии на одно из списка адресов выполняется функция сохранение данных
+  const onClickAddress = (address: string, lat: number, lon: number) => {
     setState((prevState) => ({
       ...prevState,
-      address: value,
+      address: address,
+      coordinates: [lat, lon],
     }));
   };
 
@@ -394,11 +395,11 @@ const CreateInstitution = () => {
         />
 
         <div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex' }}>
             <TextField
               fullWidth
               required
-              label="Адрес заведение (Улица, номер здании)"
+              label="Адрес заведение (номер здании, улица)"
               name="address"
               type="text"
               value={state.address}
@@ -406,8 +407,8 @@ const CreateInstitution = () => {
               error={state.address.trim() === '' && state.address.includes(' ')}
               helperText={
                 state.address.trim() === '' && state.address.includes(' ')
-                  ? 'Поле не должно быть пустым или содержать только пробелы!'
-                  : ''
+                  && 'Поле не должно быть пустым или содержать только пробелы!' ||
+                state.coordinates[0] === 0 && 'Введите достоверный адрес'
               }
               disabled={!locationSelect || locationSelect?.city === '' || isLocationUpdateLoading}
             />
@@ -417,14 +418,14 @@ const CreateInstitution = () => {
                   `Ваше заведение в городе ${locationSelect.city}? Если нет, то поменяйте страну или/и город в правом верхнем углу`
                   : 'Добавьте страну или/и город. Это можно сделать в правом верхнем углу'
               }
-              sx={{ border: '2px solid #000', ml: 1, borderRadius: 2 }}
+              sx={{ border: '2px solid #000', ml: 1, mt: 2, borderRadius: 2 }}
             >
               <PriorityHighIcon />
             </Tooltip>
           </div>
           {searchResult.map((elem, i) => (
             elem.displayName !== state.address &&
-            <Search key={i} displayName={elem.displayName} onClick={() => onClickAddress(elem.displayName)}/>
+            <Search key={i} displayName={elem.displayName} onClick={() => onClickAddress(elem.displayName, parseFloat(elem.lat), parseFloat(elem.lon))}/>
           ))}
         </div>
 
