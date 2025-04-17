@@ -7,17 +7,15 @@ import {
   Box,
   debounce, Tooltip,
 } from '@mui/material';
-import {ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState} from 'react';
+import { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Institution } from '../../types/types.Institution';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import {useAppDispatch, useAppSelector} from '../../app/hooks.ts';
+import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
 import { createInstitution } from './institutionsThunk.ts';
 import axiosApi from '../../utils/axiosApi.ts';
 import Search from '../../components/Searchs/Search.tsx';
-import PhoneInput, { CountryData } from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
 import SocialMediaPhoneNumber from './components/SocialMediaPhoneNumber.tsx'; // Стили для PhoneInput
 import phone from '../../../public/2121.png';
 import whatsapp from '../../../public/whatsapp.png';
@@ -27,7 +25,10 @@ import instagram from '../../../public/instagram.png';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import {selectLocation, selectUpdateLocationLoading} from '../maps/locationSlice.ts';
+import { selectLocation, selectLocationLoading, selectUpdateLocationLoading } from '../maps/locationSlice.ts';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 
 interface searchTable {
@@ -38,68 +39,29 @@ interface searchTable {
 
 const CreateInstitution = () => {
   const locationSelect = useAppSelector(selectLocation);
+  const isLocationLoading = useAppSelector(selectLocationLoading);
   const isLocationUpdateLoading = useAppSelector(selectUpdateLocationLoading);
+
+  const defaultSocialMedia = [
+    { name: 'phone', theres: true, logo: phone },
+    { name: 'whatsapp', theres: false, logo: whatsapp },
+    { name: 'telegram', theres: false, logo: telegram },
+    { name: 'facebook', theres: false, logo: facebook },
+    { name: 'instagram', theres: false, logo: instagram },
+  ];
 
   const [state, setState] = useState<Institution>({
     name: '',
     description: '',
     schedule: [
-      {
-        day: 'Понедельник',
-        open: true,
-        start: dayjs('00:00', 'HH:mm'),
-        finish: dayjs('00:00', 'HH:mm'),
-        twentyFourHours: false,
-      },
-      {
-        day: 'Вторник',
-        open: true,
-        start: dayjs('00:00', 'HH:mm'),
-        finish: dayjs('00:00', 'HH:mm'),
-        twentyFourHours: false,
-      },
-      {
-        day: 'Среда',
-        open: true,
-        start: dayjs('00:00', 'HH:mm'),
-        finish: dayjs('00:00', 'HH:mm'),
-        twentyFourHours: false,
-      },
-      {
-        day: 'Четверг',
-        open: true,
-        start: dayjs('00:00', 'HH:mm'),
-        finish: dayjs('00:00', 'HH:mm'),
-        twentyFourHours: false,
-      },
-      {
-        day: 'Пятница',
-        open: true,
-        start: dayjs('00:00', 'HH:mm'),
-        finish: dayjs('00:00', 'HH:mm'),
-        twentyFourHours: false,
-      },
-      {
-        day: 'Суббота',
-        open: false,
-        start: dayjs('00:00', 'HH:mm'),
-        finish: dayjs('00:00', 'HH:mm'),
-        twentyFourHours: false,
-      },
-      {
-        day: 'Воскресенье',
-        open: false,
-        start: dayjs('00:00', 'HH:mm'),
-        finish: dayjs('00:00', 'HH:mm'),
-        twentyFourHours: false,
-      },
-      {
-        day: 'Перерыв',
-        open: false,
-        start: dayjs('12:30', 'HH:mm'),
-        finish: dayjs('13:30', 'HH:mm'),
-        twentyFourHours: false,
-      }
+      { day: 'Понедельник', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
+      { day: 'Вторник', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
+      { day: 'Среда', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
+      { day: 'Четверг', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
+      { day: 'Пятница', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
+      { day: 'Суббота', open: false, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
+      { day: 'Воскресенье', open: false, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
+      { day: 'Перерыв', open: false, start: dayjs('12:30', 'HH:mm'), finish: dayjs('13:30', 'HH:mm'), twentyFourHours: false },
     ],
     address: '',
     coordinates: [0, 0],
@@ -110,37 +72,14 @@ const CreateInstitution = () => {
         internationalCode: '',
         phoneError: false,
         socialOpen: false,
-        socialMedia: [
-          {
-            name: 'phone',
-            theres: true,
-            logo: phone,
-          },
-          {
-            name: 'whatsapp',
-            theres: false,
-            logo: whatsapp,
-          },
-          {
-            name: 'telegram',
-            theres: false,
-            logo: telegram,
-          },
-          {
-            name: 'facebook',
-            theres: false,
-            logo: facebook,
-          },
-          {
-            name: 'instagram',
-            theres: false,
-            logo: instagram,
-          },
-        ],
+        socialMedia: defaultSocialMedia,
       },
     ],
   });
+
   console.log(state);
+  console.log(locationSelect);
+
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
 
   // Функция для получении списка улиц
@@ -193,6 +132,7 @@ const CreateInstitution = () => {
     setState((prevState) => ({
       ...prevState,
       [name]: value,
+      coordinates: [0, 0],
     }));
   };
 
@@ -241,39 +181,28 @@ const CreateInstitution = () => {
     }));
   };
 
-  const handlePhoneChange = (value: string, country: CountryData, index: number) => {
-    const phoneFormat = country.format.replace(/[( )+-]/g, '');
-    const maxLength = phoneFormat.length;
+  const handlePhoneChange = (value: string, index: number) => {
+    const phoneNumber = parsePhoneNumberFromString(value.startsWith('+') ? value : '+' + value);
 
-    console.log("Формат телефона:", phoneFormat, phoneFormat.length);
-    console.log(`Максимальная длина номера для кода страны: ${maxLength}, - ${country.dialCode}`);
-
-    if (value.length === maxLength) {
-      setState((prevState) => ({
-        ...prevState,
-        phoneNumber: prevState.phoneNumber.map((item, i) =>
-          i === index ? { ...item, phoneError: true } : item
-        ),
-      }));
-      console.log(value, value.length, 'Тут полная длина');
-    } else {
-      setState((prevState) => ({
-        ...prevState,
-        phoneNumber: prevState.phoneNumber.map((item, i) =>
-          i === index ? { ...item, phoneError: false } : item
-        ),
-      }));
-      console.log(value, value.length, 'Тут не полная длина');
-    }
+    const isValid = phoneNumber?.isValid() ?? false; // проверка валидности номера
+    const countryCode = phoneNumber?.country?.toLowerCase() || ''; // iso код страны (A2)
 
     setState((prevState) => ({
       ...prevState,
       phoneNumber: prevState.phoneNumber.map((item, i) =>
-        i === index ? { ...item, number: value, internationalCode: country.countryCode } : item
+        i === index
+          ? {
+            ...item,
+            number: value,
+            internationalCode: countryCode,
+            phoneError: isValid,
+          }
+          : item
       ),
     }));
   };
 
+  // Добавляет новое поле для телефона
   const addNewPhone = () => {
     const newNumberPhone = {
       id: Date.now(), // Устанавливаем уникальный id
@@ -281,33 +210,7 @@ const CreateInstitution = () => {
       internationalCode: '',
       phoneError: false,
       socialOpen: false,
-      socialMedia: [
-        {
-          name: 'phone',
-          theres: true,
-          logo: phone,
-        },
-        {
-          name: 'whatsapp',
-          theres: false,
-          logo: whatsapp,
-        },
-        {
-          name: 'telegram',
-          theres: false,
-          logo: telegram,
-        },
-        {
-          name: 'facebook',
-          theres: false,
-          logo: facebook,
-        },
-        {
-          name: 'instagram',
-          theres: false,
-          logo: instagram,
-        },
-      ],
+      socialMedia: defaultSocialMedia,
     };
 
     setState((prevState)=> ({
@@ -434,14 +337,20 @@ const CreateInstitution = () => {
           {state.phoneNumber.map((elem, index) => (
             <div key={elem.id} className="phone-block">
               <PhoneInput
-                country={elem.internationalCode}
+                country={isLocationLoading ? '' : locationSelect?.altSpellings[0].toLowerCase()}
                 value={elem.number}
-                onChange={(value, country: CountryData) => handlePhoneChange(value, country, index)}
+                onChange={(value) => handlePhoneChange(value, index)}
                 countryCodeEditable={false}
+                enableSearch={true}
                 inputProps={{
                   className: `phone-input ${!elem.phoneError ? 'error-border' : 'phone-input'}`,
                 }}
               />
+              {!elem.phoneError && elem.number && (
+                <span style={{ color: 'red', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
+                  Введите верный формат телефона
+                </span>
+              )}
               <Tooltip title={ elem.socialOpen ? 'Скрыть' : 'Добавить соцсети'}>
                 <div
                   onClick={() => openSocialList(index)}
