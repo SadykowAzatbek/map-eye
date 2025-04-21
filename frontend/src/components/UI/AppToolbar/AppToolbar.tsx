@@ -287,6 +287,7 @@ const AppToolbar = () => {
                     </div>
                     <Button
                       type="submit"
+                      onClick={handleCreateLocation}
                       disabled={
                         isLocationUpdateLoading ||
                         locationData.location === '' ||
@@ -304,13 +305,10 @@ const AppToolbar = () => {
                   <Typography
                     component="div"
                     className="main-nav"
-                    onClick={async () => {
-                      setLocationBlock(true);
-                      handleCreateLocation();
-                    }}
+                    onClick={() => setLocationBlock(true)}
                     sx={{ cursor: "pointer", p: 1 }}
                   >
-                    {!locationSelect ? 'Добавить (регион, город)' : 'Изменить (страна, город)'}
+                    {!locationSelect ? 'Добавить (страна, город)' : 'Изменить (страна, город)'}
                   </Typography>
                 )}
               </Box>

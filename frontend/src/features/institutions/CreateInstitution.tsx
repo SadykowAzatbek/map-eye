@@ -29,6 +29,7 @@ import { selectLocation, selectLocationLoading, selectUpdateLocationLoading } fr
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { useNavigate } from 'react-router-dom';
 
 
 interface searchTable {
@@ -41,6 +42,7 @@ const CreateInstitution = () => {
   const locationSelect = useAppSelector(selectLocation);
   const isLocationLoading = useAppSelector(selectLocationLoading);
   const isLocationUpdateLoading = useAppSelector(selectUpdateLocationLoading);
+  const navigate = useNavigate();
 
   const defaultSocialMedia = [
     { name: 'phone', theres: true, logo: phone },
@@ -262,6 +264,7 @@ const CreateInstitution = () => {
     event.preventDefault();
 
     await dispatch(createInstitution(state));
+    navigate('/');
   };
 
   return (
@@ -337,7 +340,11 @@ const CreateInstitution = () => {
           {state.phoneNumber.map((elem, index) => (
             <div key={elem.id} className="phone-block">
               <PhoneInput
-                country={isLocationLoading ? '' : locationSelect?.altSpellings[0].toLowerCase()}
+                country={
+                  isLocationLoading || !locationSelect?.altSpellings?.length
+                    ? ''
+                    : locationSelect.altSpellings[0].toLowerCase()
+                }
                 value={elem.number}
                 onChange={(value) => handlePhoneChange(value, index)}
                 countryCodeEditable={false}
