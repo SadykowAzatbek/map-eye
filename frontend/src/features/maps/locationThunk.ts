@@ -22,8 +22,8 @@ export const createMyLocationThunk = createAsyncThunk<
   'post/location',
   async ({ locationData, locationId }) => {
     try {
-      // если locationId не null то запрос с locationId иначе без него
-      const url = locationId ? `${serverRoute.location}${locationId}` : serverRoute.location;
+      // если locationId не равна пустой строке, то запрос с locationId иначе без него
+      const url = locationId !== '' ? `${serverRoute.location}${locationId}` : serverRoute.location;
       await axiosApi.post(url, locationData);
     } catch (err) {
       console.error(err);

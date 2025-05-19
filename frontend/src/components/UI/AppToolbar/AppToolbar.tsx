@@ -148,15 +148,12 @@ const AppToolbar = () => {
     }));
   };
 
-  const handleCreateLocation = () => {
-    // Если locationSelect равен null то отправляется запрос на создание местоположении
-    if (!locationSelect) {
-      dispatch(createMyLocationThunk({ locationData: locationData, locationId: locationSelect }));
-      // Иначе задать новое состояние
-    } else {
-      setLocationData(locationSelect);
-    }
-  };
+  // const handleCreateLocation = () => {
+  //   // Если !locationSelect то отправляется запрос на создание местоположении
+  //   if (!locationSelect) {
+  //     dispatch(createMyLocationThunk({ locationData: locationData, locationId: locationSelect }));
+  //   }
+  // };
 
   // Задает название для location после нажатие на одну из списков стран
   const onClickCountry = (value: string, countryCode: []) => {
@@ -177,8 +174,11 @@ const AppToolbar = () => {
   const handleSubmitForm = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (locationData._id) {
-      dispatch(changeMyLocationThunk({ locationData: locationData, locId: locationData._id }));
+    if (!locationSelect) {
+      dispatch(createMyLocationThunk({ locationData: locationData, locationId: locationSelect }));
+    } else {
+      if (locationSelect._id)
+        dispatch(changeMyLocationThunk({ locationData: locationData, locId: locationSelect._id }));
     }
     setLocationBlock(false);
 
@@ -285,21 +285,25 @@ const AppToolbar = () => {
                         </div>
                       </div>
                     </div>
-                    <Button
-                      type="submit"
-                      onClick={handleCreateLocation}
-                      disabled={
-                        isLocationUpdateLoading ||
-                        locationData.location === '' ||
-                        region.length === 0 ||
-                        !region.some(item => item.name.common.toLowerCase().includes(locationData.location.toLowerCase())) || // хотя бы 1 из списка должно совпадать
-                        locationData.city === '' ||
-                        cities.length === 0 ||
-                        !cities.some(item => item.name.toLowerCase().includes(locationData.city.toLocaleLowerCase())) // точно так же как и с странами
-                      }
-                    >
-                      сохранить {isLocationUpdateLoading && (<CircularProgress sx={{ml: 1}}/>)}
-                    </Button>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <Button
+                        type="submit"
+                        disabled={
+                          isLocationUpdateLoading ||
+                          locationData.location === '' ||
+                          region.length === 0 ||
+                          !region.some(item => item.name.common.toLowerCase().includes(locationData.location.toLowerCase())) || // хотя бы 1 из списка должно совпадать
+                          locationData.city === '' ||
+                          cities.length === 0 ||
+                          !cities.some(item => item.name.toLowerCase().includes(locationData.city.toLocaleLowerCase())) // точно так же как и с странами
+                        }
+                      >
+                        сохранить {isLocationUpdateLoading && (<CircularProgress sx={{ml: 1}}/>)}
+                      </Button>
+                      <Button type="button" onClick={() => setLocationBlock(false)}>
+                        отмена
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <Typography
@@ -308,7 +312,7 @@ const AppToolbar = () => {
                     onClick={() => setLocationBlock(true)}
                     sx={{ cursor: "pointer", p: 1 }}
                   >
-                    {!locationSelect ? 'Добавить (страна, город)' : 'Изменить (страна, город)'}
+                    {!locationSelect ? 'Добавить (страна, город)' : `Изменить (${locationSelect.location}, ${locationSelect.city})`}
                   </Typography>
                 )}
               </Box>
