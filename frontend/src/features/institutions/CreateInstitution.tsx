@@ -115,11 +115,17 @@ const CreateInstitution = () => {
     const fetchUrl = async () => {
       if (locationSelect) {
         if (state.address) await debouncedSearchStreet(locationSelect.location, locationSelect.city, state.address);
+        if (isLocationUpdateLoading) {
+          setState((prevState) => ({
+            ...prevState,
+            address: '',
+          }));
+        }
       }
     };
 
     void fetchUrl();
-  }, [locationSelect, state.address]);
+  }, [locationSelect, state.address, isLocationUpdateLoading]);
 
   const [everyoneTime, setEveryoneTime] = useState({
     start: dayjs('00:00', 'HH:mm'),
@@ -316,7 +322,11 @@ const CreateInstitution = () => {
                   && 'Поле не должно быть пустым или содержать только пробелы!' ||
                 state.coordinates[0] === 0 && 'Введите достоверный адрес'
               }
-              disabled={!locationSelect || locationSelect?.city === '' || isLocationUpdateLoading}
+              disabled={
+                !locationSelect ||
+                locationSelect?.city === '' ||
+                isLocationUpdateLoading
+              }
             />
             <Tooltip
               title={

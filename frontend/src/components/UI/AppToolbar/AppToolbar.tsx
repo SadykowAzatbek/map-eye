@@ -42,7 +42,7 @@ const Link = styled(NavLink)({
 });
 
 type countryTypes = {
-  altSpellings: [];
+  altSpellings: string[];
   name: {
     common: string;
   };
@@ -105,6 +105,7 @@ const AppToolbar = () => {
           city: '',
         }));
 
+        // сбрасывает список городов
         setCities((prevState) => (prevState.slice(0, 0)));
       }
     };
@@ -148,15 +149,8 @@ const AppToolbar = () => {
     }));
   };
 
-  // const handleCreateLocation = () => {
-  //   // Если !locationSelect то отправляется запрос на создание местоположении
-  //   if (!locationSelect) {
-  //     dispatch(createMyLocationThunk({ locationData: locationData, locationId: locationSelect }));
-  //   }
-  // };
-
   // Задает название для location после нажатие на одну из списков стран
-  const onClickCountry = (value: string, countryCode: []) => {
+  const onClickCountry = (value: string, countryCode: string[]) => {
     setLocationData((prevState) => ({
       ...prevState,
       location: value,
@@ -225,6 +219,7 @@ const AppToolbar = () => {
                         label="Страна"
                         name="location"
                         type="text"
+                        autoComplete="off"
                         value={isLoading ? 'Загрузка...' : locationData.location}
                         onChange={handleRegionChange}
                         onFocus={() => setIsFocused(true)} // если в фокусе
