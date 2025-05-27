@@ -83,6 +83,7 @@ const CreateInstitution = () => {
   console.log(locationSelect);
 
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
+  console.log(searchResult, " -:SeacrhResult");
 
   // Функция для получении списка улиц
   const searchStreet = useCallback(async (location: string, city: string, address: string) => {
@@ -91,7 +92,7 @@ const CreateInstitution = () => {
     );
     const filterData = response.data
       .filter((elem: { addresstype: string }) => elem.addresstype === 'building')
-      .map((elem) => ({
+      .map((elem: { display_name: string, lat: string, lon: string }) => ({
         displayName: elem.display_name,
         lat: elem.lat,
         lon: elem.lon,
@@ -115,6 +116,7 @@ const CreateInstitution = () => {
     const fetchUrl = async () => {
       if (locationSelect) {
         if (state.address) await debouncedSearchStreet(locationSelect.location, locationSelect.city, state.address);
+        // Если место заведение изменено, то адрес сбрасывается
         if (isLocationUpdateLoading) {
           setState((prevState) => ({
             ...prevState,
@@ -331,7 +333,7 @@ const CreateInstitution = () => {
             <Tooltip
               title={
                 locationSelect && locationSelect.city ?
-                  `Ваше заведение в городе ${locationSelect.city}? Если нет, то поменяйте страну или/и город в правом верхнем углу`
+                  `Ваше заведение в городе ${locationSelect.city}? Иначе поменяйте страну и/или город в правом верхнем углу`
                   : 'Добавьте страну или/и город. Это можно сделать в правом верхнем углу'
               }
               sx={{ border: '2px solid #000', ml: 1, mt: 2, borderRadius: 2 }}
@@ -479,7 +481,9 @@ const CreateInstitution = () => {
                   item.twentyFourHours ? false :
                   !dayjs(item.start, 'HH:mm', true).isValid() ||
                   !dayjs(item.finish, 'HH:mm', true).isValid()
-              )
+              ) ||
+              state.coordinates.every(elem => elem === 0)
+              // !searchResult.some(item => item.displayName.includes(state.address))
             }
           >
             Отправить
