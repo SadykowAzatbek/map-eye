@@ -318,11 +318,16 @@ const CreateInstitution = () => {
               type="text"
               value={state.address}
               onChange={inputChangeHandler}
-              error={state.address.trim() === '' && state.address.includes(' ')}
+              error={
+                state.address.trim() === '' && state.address.includes(' ') ||
+                state.address !== '' && state.coordinates.every(elem => elem === 0)
+              }
               helperText={
                 state.address.trim() === '' && state.address.includes(' ')
-                  && 'Поле не должно быть пустым или содержать только пробелы!' ||
-                state.coordinates[0] === 0 && 'Введите достоверный адрес'
+                  ? 'Поле не должно быть пустым или содержать только пробелы!'
+                  : state.address !== '' && state.coordinates.every(elem => elem === 0)
+                    ? 'Введите достоверный адрес'
+                    : ''
               }
               disabled={
                 !locationSelect ||
@@ -483,7 +488,6 @@ const CreateInstitution = () => {
                   !dayjs(item.finish, 'HH:mm', true).isValid()
               ) ||
               state.coordinates.every(elem => elem === 0)
-              // !searchResult.some(item => item.displayName.includes(state.address))
             }
           >
             Отправить
