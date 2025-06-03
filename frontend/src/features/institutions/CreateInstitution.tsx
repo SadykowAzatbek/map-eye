@@ -5,7 +5,7 @@ import {
   Button,
   Typography,
   Box,
-  debounce, Tooltip,
+  debounce, Tooltip, CircularProgress,
 } from '@mui/material';
 import { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Institution } from '../../types/types.Institution';
@@ -30,6 +30,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useNavigate } from 'react-router-dom';
+import { selectCreateIsLoadingInstitutions } from './institutionSlice.ts';
 
 
 interface searchTable {
@@ -42,6 +43,7 @@ const CreateInstitution = () => {
   const locationSelect = useAppSelector(selectLocation);
   const isLocationLoading = useAppSelector(selectLocationLoading);
   const isLocationUpdateLoading = useAppSelector(selectUpdateLocationLoading);
+  const isInstitutionCreateLoading = useAppSelector(selectCreateIsLoadingInstitutions);
   const navigate = useNavigate();
 
   const defaultSocialMedia = [
@@ -142,7 +144,6 @@ const CreateInstitution = () => {
     setState((prevState) => ({
       ...prevState,
       [name]: value,
-      coordinates: [0, 0],
     }));
   };
 
@@ -236,6 +237,7 @@ const CreateInstitution = () => {
     }));
   };
 
+  //Я не помню и не понимаю почему так все усложнил
   const openSocialList = (index: number) => {
     setState((prevState) => ({
       ...prevState,
@@ -316,6 +318,7 @@ const CreateInstitution = () => {
               label="Адрес заведение (номер здании, улица)"
               name="address"
               type="text"
+              autoComplete="off"
               value={state.address}
               onChange={inputChangeHandler}
               error={
@@ -364,7 +367,6 @@ const CreateInstitution = () => {
                 }
                 value={elem.number}
                 onChange={(value) => handlePhoneChange(value, index)}
-                countryCodeEditable={false}
                 enableSearch={true}
                 inputProps={{
                   className: `phone-input ${!elem.phoneError ? 'error-border' : 'phone-input'}`,
@@ -487,10 +489,12 @@ const CreateInstitution = () => {
                   !dayjs(item.start, 'HH:mm', true).isValid() ||
                   !dayjs(item.finish, 'HH:mm', true).isValid()
               ) ||
-              state.coordinates.every(elem => elem === 0)
+              state.coordinates.every(elem => elem === 0) ||
+              state.phoneNumber.every(elem => !elem.phoneError) ||
+              isInstitutionCreateLoading
             }
           >
-            Отправить
+            Отправить {isInstitutionCreateLoading ? (<CircularProgress sx={{ ml: 2 }} />) : ''}
           </Button>
         </div>
     </Box>

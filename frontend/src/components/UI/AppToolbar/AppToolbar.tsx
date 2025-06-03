@@ -84,6 +84,9 @@ const AppToolbar = () => {
 
   // Callback для получении до 10 стран по первым введенным буквам
   const getCountry = useCallback(async (query: string) => {
+    if (query.includes(' ')) {
+      return;
+    }
     const response = await axiosApi.get<countryTypes[]>(`https://restcountries.com/v3.1/name/${query}`);
     const filterData = response.data
       .filter(country => country.name.common.includes(query)) // Получаем страны с похожими начальными названиями
@@ -113,6 +116,9 @@ const AppToolbar = () => {
   }, [locationData.location, dispatch]);
 
   const getCitiesList = useCallback(async (query: string, altSpelling: string) => {
+    if (query.includes(' ')) {
+      return;
+    }
     const response = await axiosApi.get(
       `https://nominatim.openstreetmap.org/search?q=${query}&countrycodes=${altSpelling}&format=json`
     );
