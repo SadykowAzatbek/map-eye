@@ -46,6 +46,11 @@ type countryTypes = {
   name: {
     common: string;
   };
+  translations: {
+    rus: {
+      common: string;
+    }
+  }
   flags: {
     svg: string;
   }
@@ -70,11 +75,6 @@ const AppToolbar = () => {
   const [cities, setCities] = useState<{ name: string }[]>([]);
   const [isFocusedCity, setIsFocusedCity] = useState(false);
 
-  console.log('Страны ', region);
-  console.log('То что получили: ', locationSelect);
-  console.log('Города: ', cities);
-  console.log('Общие данные ', locationData);
-
   useEffect(() => {
     // Провереям если есть пользователь то отправляется запрос
     if (user) {
@@ -84,12 +84,12 @@ const AppToolbar = () => {
 
   // Callback для получении до 10 стран по первым введенным буквам
   const getCountry = useCallback(async (query: string) => {
-    if (query.includes(' ')) {
+    if (query.includes(' ')) { // Защита от отправки пустого запроса
       return;
     }
     const response = await axiosApi.get<countryTypes[]>(`https://restcountries.com/v3.1/name/${query}`);
     const filterData = response.data
-      .filter(country => country.name.common.includes(query)) // Получаем страны с похожими начальными названиями
+      .filter(country => country.translations.rus.common.includes(query)) // Получаем страны с похожими начальными названиями
       .slice(0, 9); // Ограничиваем результат массива до 9
 
     setRegion(filterData); // Задаем состояние
@@ -99,17 +99,28 @@ const AppToolbar = () => {
 
   useEffect(() => {
     const regions = async () => {
-      // При изминении ключа location выполняется функция getCountry для получении 10 стран
+      // При изменении ключа location выполняется функция getCountry для получении 10 стран
       if (locationData.location) {
         await debounceGetCountry(locationData.location);
 
         setLocationData((prevState) => ({
           ...prevState,
+          altSpellings: [],
           city: '',
         }));
 
         // сбрасывает список городов
         setCities((prevState) => (prevState.slice(0, 0)));
+
+        // Если location равна хотя бы одному из списка стран, то его данные сохраняются
+        region.some((item) => (
+          item.translations.rus.common === locationData.location &&
+            setLocationData((prevState) => ({
+              ...prevState,
+              location: item.translations.rus.common,
+              altSpellings: item.altSpellings,
+            }))
+        ));
       }
     };
     void regions();
@@ -231,9 +242,9 @@ const AppToolbar = () => {
                         onFocus={() => setIsFocused(true)} // если в фокусе
                         onBlur={() => setIsFocused(false)}
                         disabled={isLoading}
-                        error={!region.some(item => item.name.common.toLowerCase().includes(locationData.location.toLowerCase()))}
+                        error={!region.some(item => item.translations.rus.common.toLowerCase().includes(locationData.location.toLowerCase()))}
                         helperText={
-                          !region.some(item => item.name.common.toLowerCase().includes(locationData.location.toLowerCase())) &&
+                          !region.some(item => item.translations.rus.common.toLowerCase().includes(locationData.location.toLowerCase())) &&
                           'Страна не выбрана'
                         }
                         sx={{background: '#fff' }}
@@ -241,11 +252,11 @@ const AppToolbar = () => {
                       {isFocused && (
                         <div style={{position: "absolute", width: "100%", background: "#fff"}}>
                           {region.map((elem, i) => (
-                            elem.name.common !== locationData.location &&
+                            elem.translations.rus.common !== locationData.location &&
                             <Search
                               key={i}
-                              displayName={elem.name.common}
-                              onClick={() => onClickCountry(elem.name.common, elem.altSpellings)}
+                              displayName={elem.translations.rus.common}
+                              onClick={() => onClickCountry(elem.translations.rus.common, elem.altSpellings)}
                               image={elem.flags.svg}
                             />
                           ))}
@@ -293,7 +304,7 @@ const AppToolbar = () => {
                           isLocationUpdateLoading ||
                           locationData.location === '' ||
                           region.length === 0 ||
-                          !region.some(item => item.name.common.toLowerCase().includes(locationData.location.toLowerCase())) || // хотя бы 1 из списка должно совпадать
+                          !region.some(item => item.translations.rus.common.toLowerCase().includes(locationData.location.toLowerCase())) || // хотя бы 1 из списка должно совпадать
                           locationData.city === '' ||
                           cities.length === 0 ||
                           !cities.some(item => item.name.toLowerCase().includes(locationData.city.toLocaleLowerCase())) // точно так же как и с странами

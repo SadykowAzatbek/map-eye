@@ -81,11 +81,7 @@ const CreateInstitution = () => {
     ],
   });
 
-  console.log(state);
-  console.log(locationSelect);
-
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
-  console.log(searchResult, " -:SeacrhResult");
 
   // Функция для получении списка улиц
   const searchStreet = useCallback(async (location: string, city: string, address: string) => {
@@ -123,6 +119,7 @@ const CreateInstitution = () => {
           setState((prevState) => ({
             ...prevState,
             address: '',
+            coordinates: [0, 0],
           }));
         }
       }
@@ -237,7 +234,6 @@ const CreateInstitution = () => {
     }));
   };
 
-  //Я не помню и не понимаю почему так все усложнил
   const openSocialList = (index: number) => {
     setState((prevState) => ({
       ...prevState,
@@ -490,7 +486,7 @@ const CreateInstitution = () => {
                   !dayjs(item.finish, 'HH:mm', true).isValid()
               ) ||
               state.coordinates.every(elem => elem === 0) ||
-              state.phoneNumber.every(elem => !elem.phoneError) ||
+              state.phoneNumber.some(elem => !elem.phoneError) ||
               isInstitutionCreateLoading
             }
           >
