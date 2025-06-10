@@ -31,7 +31,7 @@ import 'react-phone-input-2/lib/style.css';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useNavigate } from 'react-router-dom';
 import { selectCreateIsLoadingInstitutions } from './institutionSlice.ts';
-
+import ClearIcon from '@mui/icons-material/Clear';
 
 interface searchTable {
   displayName: string;
@@ -275,149 +275,161 @@ const CreateInstitution = () => {
 
   return (
     <>
-    <Box
-      onSubmit={formSubmitHandler}
-      component="form"
-      className="institution-form"
-    >
-      <div className="form-block main-form">
-        <TextField
-          required
-          label="Название заведение"
-          name="name"
-          type="text"
-          value={state.name}
-          onChange={inputChangeHandler}
-          error={state.name.trim() === '' && state.name.includes(' ')} // Выводит ошибку если строка состоит из пробелов
-          helperText={
-            state.name.trim() === '' && state.name.includes(' ')
-              ? 'Поле не должно быть пустым или содержать только пробелы!'
-              : ''
-          }
-        />
+      <Box
+        onSubmit={formSubmitHandler}
+        component="form"
+        className="institution-form"
+      >
+        <div className="form-block main-form">
+          <Typography component="div" variant="h5" sx={{ borderBottom: "1px solid #ccc" }}><b>Мое заведение:</b></Typography>
+          <TextField
+            required
+            label="Название заведение"
+            name="name"
+            type="text"
+            value={state.name}
+            onChange={inputChangeHandler}
+            error={state.name.trim() === '' && state.name.includes(' ')} // Выводит ошибку если строка состоит из пробелов
+            helperText={
+              state.name.trim() === '' && state.name.includes(' ')
+                ? 'Поле не должно быть пустым или содержать только пробелы!'
+                : ''
+            }
+          />
 
-        <TextField
-          label="Описание (например, что представляет из себя ваше заведение)"
-          name="description"
-          multiline //input становится textarea
-          rows={8} //Кол-во видимых строк
-          variant="outlined"
-          value={state.description}
-          onChange={inputChangeHandler}
-        />
+          <TextField
+            label="Описание (например, что представляет из себя ваше заведение)"
+            name="description"
+            multiline //input становится textarea
+            rows={8} //Кол-во видимых строк
+            variant="outlined"
+            value={state.description}
+            onChange={inputChangeHandler}
+          />
 
-        <div>
-          <div style={{ display: 'flex' }}>
-            <TextField
-              fullWidth
-              required
-              label="Адрес заведение (номер здании, улица)"
-              name="address"
-              type="text"
-              autoComplete="off"
-              value={state.address}
-              onChange={inputChangeHandler}
-              error={
-                state.address.trim() === '' && state.address.includes(' ') ||
-                state.address !== '' && state.coordinates.every(elem => elem === 0)
-              }
-              helperText={
-                state.address.trim() === '' && state.address.includes(' ')
-                  ? 'Поле не должно быть пустым или содержать только пробелы!'
-                  : state.address !== '' && state.coordinates.every(elem => elem === 0)
-                    ? 'Введите достоверный адрес'
-                    : ''
-              }
-              disabled={
-                !locationSelect ||
-                locationSelect?.city === '' ||
-                isLocationUpdateLoading
-              }
-            />
-            <Tooltip
-              title={
-                locationSelect && locationSelect.city ?
-                  `Ваше заведение в городе ${locationSelect.city}? Иначе поменяйте страну и/или город в правом верхнем углу`
-                  : 'Добавьте страну или/и город. Это можно сделать в правом верхнем углу'
-              }
-              sx={{ border: '2px solid #000', ml: 1, mt: 2, borderRadius: 2 }}
-            >
-              <PriorityHighIcon />
-            </Tooltip>
-          </div>
-          {searchResult.map((elem, i) => (
-            elem.displayName !== state.address &&
-            <Search key={i} displayName={elem.displayName} onClick={() => onClickAddress(elem.displayName, parseFloat(elem.lat), parseFloat(elem.lon))}/>
-          ))}
-        </div>
-
-        <div>
-          <Button type="button" onClick={addNewPhone}>Добавить номер телефона +</Button>
-          {state.phoneNumber.map((elem, index) => (
-            <div key={elem.id} className="phone-block">
-              <PhoneInput
-                country={
-                  isLocationLoading || !locationSelect?.altSpellings?.length
-                    ? ''
-                    : locationSelect.altSpellings[0].toLowerCase()
+          <div>
+            <div style={{ display: 'flex' }}>
+              <TextField
+                fullWidth
+                required
+                label="Адрес заведение (номер здании, улица)"
+                name="address"
+                type="text"
+                autoComplete="off"
+                value={state.address}
+                onChange={inputChangeHandler}
+                error={
+                  state.address.trim() === '' && state.address.includes(' ') ||
+                  state.address !== '' && state.coordinates.every(elem => elem === 0)
                 }
-                value={elem.number}
-                onChange={(value) => handlePhoneChange(value, index)}
-                enableSearch={true}
-                inputProps={{
-                  className: `phone-input ${!elem.phoneError ? 'error-border' : 'phone-input'}`,
-                }}
+                helperText={
+                  state.address.trim() === '' && state.address.includes(' ')
+                    ? 'Поле не должно быть пустым или содержать только пробелы!'
+                    : state.address !== '' && state.coordinates.every(elem => elem === 0)
+                      ? 'Введите достоверный адрес'
+                      : ''
+                }
+                disabled={
+                  !locationSelect ||
+                  locationSelect?.city === '' ||
+                  isLocationUpdateLoading
+                }
               />
-              {!elem.phoneError && elem.number && (
-                <span style={{ color: 'red', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
+              <Tooltip
+                title={
+                  locationSelect && locationSelect.city ?
+                    `Ваше заведение в городе ${locationSelect.city}? Иначе поменяйте страну и/или город в правом верхнем углу`
+                    : 'Добавьте страну или/и город. Это можно сделать в правом верхнем углу'
+                }
+                sx={{ border: '2px solid #000', ml: 1, mt: 2, borderRadius: 2 }}
+              >
+                <PriorityHighIcon />
+              </Tooltip>
+            </div>
+            {searchResult.map((elem, i) => (
+              elem.displayName !== state.address &&
+              <Search key={i} displayName={elem.displayName} onClick={() => onClickAddress(elem.displayName, parseFloat(elem.lat), parseFloat(elem.lon))}/>
+            ))}
+          </div>
+
+          <div style={{ borderTop: "1px solid #ccc" }}>
+            <Button type="button" onClick={addNewPhone} sx={{ mt: 1 }}>Добавить контакт +</Button>
+            {state.phoneNumber.map((elem, index) => (
+              <div key={elem.id} className="phone-block">
+                <PhoneInput
+                  country={
+                    isLocationLoading || !locationSelect?.altSpellings?.length
+                      ? ''
+                      : locationSelect.altSpellings[0].toLowerCase()
+                  }
+                  value={elem.number}
+                  onChange={(value) => handlePhoneChange(value, index)}
+                  enableSearch={true}
+                  inputProps={{
+                    className: `phone-input ${!elem.phoneError ? 'error-border' : 'phone-input'}`,
+                  }}
+                />
+                {!elem.phoneError && elem.number && (
+                  <span style={{ color: 'red', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
                   Введите верный формат телефона
                 </span>
-              )}
-              <Tooltip title={ elem.socialOpen ? 'Скрыть' : 'Добавить соцсети'}>
-                <div
-                  onClick={() => openSocialList(index)}
-                  className={!elem.socialOpen ? 'open-close-style open-close-margin' : 'open-close-style open-close-new-margin'}
+                )}
+                <Tooltip title={ elem.socialOpen ? 'Скрыть' : 'Добавить соцсети'}>
+                  <div
+                    onClick={() => openSocialList(index)}
+                    className={!elem.socialOpen ? 'open-close-style open-close-margin' : 'open-close-style open-close-new-margin'}
+                  >
+                    {elem.socialOpen ?
+                      <KeyboardArrowLeftIcon /> :
+                      <KeyboardArrowRightIcon />
+                    }
+                  </div>
+                </Tooltip>
+                {elem.socialOpen && <div className="main-social-block">
+                  {elem.socialMedia.map((socialItem, i) => (
+                    <SocialMediaPhoneNumber
+                      key={i}
+                      name={socialItem.name}
+                      logo={socialItem.logo}
+                      open={elem.socialOpen}
+                      selected={() => selectedSocialMedia(index, i)}
+                      selectClass={{ background: socialItem.theres ? '#32CD32' : '' }}
+                    />
+                  ))}
+                </div>}
+                <Button
+                  type="button"
+                  sx={{
+                    color: "#656565",
+                    '&:hover': {
+                      color: "#000"
+                    }
+                  }}
+                  onClick={() => deletePhone(elem.id)}
                 >
-                  {elem.socialOpen ?
-                    <KeyboardArrowLeftIcon /> :
-                    <KeyboardArrowRightIcon />
-                  }
-                </div>
-              </Tooltip>
-              {elem.socialOpen && <div className="main-social-block">
-                {elem.socialMedia.map((socialItem, i) => (
-                  <SocialMediaPhoneNumber
-                    key={i}
-                    name={socialItem.name}
-                    logo={socialItem.logo}
-                    open={elem.socialOpen}
-                    selected={() => selectedSocialMedia(index, i)}
-                    selectClass={{ background: socialItem.theres ? '#32CD32' : '' }}
-                  />
-                ))}
-              </div>}
-              <Button type="button" onClick={() => deletePhone(elem.id)}>Удалить</Button>
-            </div>
-          ))}
+                  <ClearIcon />
+                </Button>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="form-block">
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Typography component="div" sx={{mb: 3}}>Задать время рабочим дням:</Typography>
-          <TimePicker
-            label="Начало рабочего дня"
-            value={everyoneTime.start}
-            onChange={(value) => handleSetTimeEveryone('start', value)}
-            ampm={false} //убирает 12 часавой формат времени
-          />
-          <TimePicker
-            label="Конец рабочего дня"
-            value={everyoneTime.finish}
-            onChange={(value) => handleSetTimeEveryone('finish', value)}
-            ampm={false}
-          />
-        </LocalizationProvider>
+        <div className="form-block">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Typography component="div" sx={{mb: 3}}>Задать время рабочим дням:</Typography>
+            <TimePicker
+              label="Начало рабочего дня"
+              value={everyoneTime.start}
+              onChange={(value) => handleSetTimeEveryone('start', value)}
+              ampm={false} //убирает 12 часавой формат времени
+            />
+            <TimePicker
+              label="Конец рабочего дня"
+              value={everyoneTime.finish}
+              onChange={(value) => handleSetTimeEveryone('finish', value)}
+              ampm={false}
+            />
+          </LocalizationProvider>
 
           <Typography component="div" sx={{mt: 3}}>Рабочие дни:</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -470,11 +482,11 @@ const CreateInstitution = () => {
               </div>
             ))}
           </LocalizationProvider>
-      </div>
+        </div>
 
-      <div className="institution-btn">
-        <Button
-          type="submit"
+        <div className="institution-btn">
+          <Button
+            type="submit"
             disabled={
               state.name.trim() === '' ||
               state.address.trim() === '' ||
@@ -482,8 +494,8 @@ const CreateInstitution = () => {
               state.schedule.filter(item => item.open).some(
                 item =>
                   item.twentyFourHours ? false :
-                  !dayjs(item.start, 'HH:mm', true).isValid() ||
-                  !dayjs(item.finish, 'HH:mm', true).isValid()
+                    !dayjs(item.start, 'HH:mm', true).isValid() ||
+                    !dayjs(item.finish, 'HH:mm', true).isValid()
               ) ||
               state.coordinates.every(elem => elem === 0) ||
               state.phoneNumber.some(elem => !elem.phoneError) ||
@@ -493,7 +505,7 @@ const CreateInstitution = () => {
             Отправить {isInstitutionCreateLoading ? (<CircularProgress sx={{ ml: 2 }} />) : ''}
           </Button>
         </div>
-    </Box>
+      </Box>
     </>
   );
 };
