@@ -1,3 +1,9 @@
+.container {
+  max-width: 1520px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
 .main-nav {
   display: flex;
   gap: 7px;
@@ -18,8 +24,12 @@
 }
 
 .form-block {
+  display: flex;
+  flex-direction: column;
+
+  gap: 15px;
   padding: 20px;
-  width: 48%;
+  width: 700px;
   margin: 1%;
 }
 
@@ -27,8 +37,9 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  padding-left: 8%;
-  padding-right: 5%;
+  padding: 20px;
+  width: 700px;
+  margin: 1%;
 }
 
 .institution-btn {
@@ -43,7 +54,7 @@
   justify-content: space-between;
   margin: 5px 0;
   padding: 5px;
-  width: 60%;
+  border-bottom: 1px solid #ccc;
 }
 
 .search-list {
@@ -146,4 +157,9 @@
 
 .close-icon-btn {
   color: #ccc;
+}
+
+.set-time-block {
+  display: flex;
+  justify-content: space-evenly;
 }

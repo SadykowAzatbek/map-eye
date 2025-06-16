@@ -274,13 +274,13 @@ const CreateInstitution = () => {
   };
 
   return (
-    <>
+    <div className="container">
       <Box
         onSubmit={formSubmitHandler}
         component="form"
         className="institution-form"
       >
-        <div className="form-block main-form">
+        <div className="main-form">
           <Typography component="div" variant="h5" sx={{ borderBottom: "1px solid #ccc" }}><b>Мое заведение:</b></Typography>
           <TextField
             required
@@ -415,23 +415,25 @@ const CreateInstitution = () => {
         </div>
 
         <div className="form-block">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Typography component="div" sx={{mb: 3}}>Задать время рабочим дням:</Typography>
-            <TimePicker
-              label="Начало рабочего дня"
-              value={everyoneTime.start}
-              onChange={(value) => handleSetTimeEveryone('start', value)}
-              ampm={false} //убирает 12 часавой формат времени
-            />
-            <TimePicker
-              label="Конец рабочего дня"
-              value={everyoneTime.finish}
-              onChange={(value) => handleSetTimeEveryone('finish', value)}
-              ampm={false}
-            />
-          </LocalizationProvider>
+          <Typography component="div" sx={{ mb: 3, ml: 'auto', mr: 'auto' }}><b>Задать общее время:</b></Typography>
+          <div className="set-time-block">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <TimePicker
+                label="Начало рабочего дня"
+                value={everyoneTime.start}
+                onChange={(value) => handleSetTimeEveryone('start', value)}
+                ampm={false} //убирает 12 часавой формат времени
+              />
+              <TimePicker
+                label="Конец рабочего дня"
+                value={everyoneTime.finish}
+                onChange={(value) => handleSetTimeEveryone('finish', value)}
+                ampm={false}
+              />
+            </LocalizationProvider>
+          </div>
 
-          <Typography component="div" sx={{mt: 3}}>Рабочие дни:</Typography>
+          <Typography component="div" sx={{ mt: 3 }}><b>Рабочие дни:</b></Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             {state.schedule.map((elem, index) => (
               <div key={elem.day} className="form-time">
@@ -444,6 +446,7 @@ const CreateInstitution = () => {
                     />
                   }
                   label={elem.day + ':'}
+                  sx={{ borderBottom: '1px solid #ccc', width: '50%' }}
                 />
                 {elem.open ? (
                   <div style={{display: 'inline-block'}}>
@@ -506,7 +509,7 @@ const CreateInstitution = () => {
           </Button>
         </div>
       </Box>
-    </>
+    </div>
   );
 };
 
