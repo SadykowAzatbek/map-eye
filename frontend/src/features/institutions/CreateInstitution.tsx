@@ -32,6 +32,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useNavigate } from 'react-router-dom';
 import { selectCreateIsLoadingInstitutions } from './institutionSlice.ts';
 import ClearIcon from '@mui/icons-material/Clear';
+import LockIcon from '@mui/icons-material/Lock';
 
 interface searchTable {
   displayName: string;
@@ -354,6 +355,9 @@ const CreateInstitution = () => {
 
           <div style={{ borderTop: "1px solid #ccc" }}>
             <Button type="button" onClick={addNewPhone} sx={{ mt: 1 }}>Добавить контакт +</Button>
+            <div className="warning-phone-block">
+              <b>При желании оставьте к первому контакту соц. сети, мы можем связаться с вами через них. В дальнейшем их можно изменить.</b>
+            </div>
             {state.phoneNumber.map((elem, index) => (
               <div key={elem.id} className="phone-block">
                 <PhoneInput
@@ -480,7 +484,9 @@ const CreateInstitution = () => {
                 ) : elem.day === 'Перерыв' ? (
                   'Без перерыва'
                 ) : (
-                  'Закрыто'
+                  <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    Закрыто <LockIcon />
+                  </div>
                 )}
               </div>
             ))}

@@ -1,5 +1,5 @@
 .container {
-  max-width: 1520px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -162,4 +162,11 @@
 .set-time-block {
   display: flex;
   justify-content: space-evenly;
+}
+
+.warning-phone-block {
+  color: #031b6a;
+  line-height: 1;
+  font-size: 14px;
+  margin: 5px 50px 0 10px;
 }
