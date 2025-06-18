@@ -7,6 +7,7 @@ import NotFound from '../components/UI/NotFound/NotFound';
 import Map from '../features/maps/Map.tsx';
 import CreateInstitution from '../features/institutions/CreateInstitution.tsx';
 import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute.tsx';
+import ClientNavigation from '../features/users/components/ClientNavigation.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -30,13 +31,17 @@ export const router = createBrowserRouter([
         element: <NotFound />,
       },
       {
+        path: appRoutes.profile,
+        element: <ClientNavigation />,
+      },
+      {
         path: appRoutes.createInstitution,
         element: (
           <ProtectedRoute>
             <CreateInstitution />
           </ProtectedRoute>
         ),
-      }
+      },
     ],
   },
 ]);

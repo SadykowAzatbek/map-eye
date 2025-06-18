@@ -34,9 +34,14 @@ const DrawerMenu: React.FC<Props> = ({ open, toggleDrawer, window }) => {
 
   const isSmallScreen = useMediaQuery('(max-width:850px)');
   const isExtraSmallScreen = useMediaQuery('(max-width:599px)');
+
   const handleLogOut = async () => {
     navigate(appRoutes.login);
     await dispatch(logout());
+  };
+
+  const handleToProfile = () => {
+    navigate(appRoutes.profile);
   };
 
   const container =
@@ -68,24 +73,44 @@ const DrawerMenu: React.FC<Props> = ({ open, toggleDrawer, window }) => {
             <>
               <Divider />
               {isExtraSmallScreen && (
-                <ListItem disableGutters>
-                  <ListItemButton
-                    onClick={handleLogOut}
-                    sx={{ borderRadius: 2 }}
-                  >
-                    <ListItemIcon>
-                      <LogoutIcon color="primary" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        fontSize: 16,
-                        color: 'primary',
-                      }}
+                <>
+                  <ListItem disableGutters>
+                    <ListItemButton
+                      onClick={handleToProfile}
+                      sx={{ borderRadius: 2 }}
                     >
-                      Выйти
-                    </ListItemText>
-                  </ListItemButton>
-                </ListItem>
+                      <ListItemIcon>
+                        <LogoutIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primaryTypographyProps={{
+                          fontSize: 16,
+                          color: 'primary',
+                        }}
+                      >
+                        Профиль
+                      </ListItemText>
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disableGutters>
+                    <ListItemButton
+                      onClick={handleLogOut}
+                      sx={{ borderRadius: 2 }}
+                    >
+                      <ListItemIcon>
+                        <LogoutIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primaryTypographyProps={{
+                          fontSize: 16,
+                          color: 'primary',
+                        }}
+                      >
+                        Выйти
+                      </ListItemText>
+                    </ListItemButton>
+                  </ListItem>
+                </>
               )}
             </>
           )}

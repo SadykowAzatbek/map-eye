@@ -26,6 +26,10 @@ const UserMenu: React.FC<Props> = ({ user }) => {
     await dispatch(logout());
   };
 
+  const handleToProfile = () => {
+    navigate(appRoutes.profile);
+  };
+
   return (
     <>
       <Stack direction="row" alignItems="center" sx={{
@@ -65,6 +69,7 @@ const UserMenu: React.FC<Props> = ({ user }) => {
           horizontal: 'right',
         }}
       >
+        <MenuItem onClick={handleToProfile}>Профиль</MenuItem>
         <MenuItem onClick={handleLogOut}>Выйти</MenuItem>
       </Menu>
     </>

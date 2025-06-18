@@ -360,11 +360,11 @@ const AppToolbar = () => {
                 </Typography>
               </Box>
             )}
-            {user && location.pathname === '/' ? <UserMenu user={user}/> : location.pathname === '/' && <GuestMenu/>}
+            {user && location.pathname === '/' ? <UserMenu user={user}/> : location.pathname === '/' && <GuestMenu />}
           </Grid>
         </Toolbar>
       </AppBar>
-      <DrawerMenu open={mobileOpen} toggleDrawer={handleDrawerToggle}/>
+      <DrawerMenu open={mobileOpen} toggleDrawer={handleDrawerToggle} />
     </Box>
   );
 };
