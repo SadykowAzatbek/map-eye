@@ -35,6 +35,7 @@ import {
   getMyLocationThunk
 } from '../../../features/maps/locationThunk.ts';
 import Search from '../../Searchs/Search.tsx';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Link = styled(NavLink)({
   color: 'inherit',
@@ -332,6 +333,7 @@ const AppToolbar = () => {
                 )}
               </Box>
             )}
+
             {location.pathname === '/' && user && (
               <Box sx={{ mr: 2, display: "flex", gap: 1 }}>
                 <Typography className="main-nav" component="div">
@@ -360,6 +362,17 @@ const AppToolbar = () => {
                 </Typography>
               </Box>
             )}
+
+            {location.pathname === '/profile' && user && (
+              <Typography
+                component="div"
+                className="main-nav"
+                sx={{ cursor: "pointer", p: 1 }}
+              >
+                Редактировать <AccountCircleIcon />
+              </Typography>
+            )}
+
             {user && location.pathname === '/' ? <UserMenu user={user}/> : location.pathname === '/' && <GuestMenu />}
           </Grid>
         </Toolbar>

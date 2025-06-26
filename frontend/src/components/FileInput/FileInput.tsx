@@ -56,7 +56,7 @@ const FileInput: React.FC<Props> = ({ onChange, name, label }) => {
           />
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={activateInput}>
+          <Button variant="contained" onClick={activateInput} sx={{ color: '#fff' }}>
             Выбрать
           </Button>
         </Grid>
