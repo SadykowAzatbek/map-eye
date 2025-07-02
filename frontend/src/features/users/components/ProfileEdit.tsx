@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
-import {Box, Button, TextField, Typography} from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import FileInput from '../../../components/FileInput/FileInput.tsx';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
+import {useAppSelector} from '../../../app/hooks.ts';
+import {selectUser} from '../usersSlice.ts';
 
 const ProfileEdit = () => {
+  const user = useAppSelector(selectUser);
+
   const [userData, setUserData] = useState({
     email: '',
     displayName: '',
     image: '',
   });
+
+  useEffect(() => {
+    if (user) {
+      setUserData((prevState) => ({
+        ...prevState,
+        email: user.email,
+        displayName: user.displayName,
+        image: user.image,
+      }));
+    }
+  }, [user]);
+
   const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
 
@@ -31,7 +47,7 @@ const ProfileEdit = () => {
         label="Email"
         name="email"
         type="email"
-        value=""
+        value={userData.email}
         placeholder="email@email.com"
       />
       <TextField
@@ -39,7 +55,7 @@ const ProfileEdit = () => {
         label="Отображаемое имя"
         name="displayName"
         type="text"
-        value=""
+        value={userData.displayName}
       />
       <Typography component="div" sx={{ display: "flex", alignItems: "center" }}>
         <AddAPhotoIcon fontSize="large" />

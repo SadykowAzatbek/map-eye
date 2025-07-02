@@ -32,7 +32,11 @@ export const router = createBrowserRouter([
       },
       {
         path: appRoutes.profile,
-        element: <ClientNavigation />,
+        element: (
+          <ProtectedRoute>
+            <ClientNavigation />
+          </ProtectedRoute>
+        ),
       },
       {
         path: appRoutes.createInstitution,

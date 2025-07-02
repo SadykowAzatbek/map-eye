@@ -52,3 +52,19 @@ export const logout = createAsyncThunk<void, undefined>(
   },
 );
 
+export const profileEditThunk = createAsyncThunk<
+  void,
+  {
+    userId: string;
+    data: {
+      email: string,
+      displayName: string,
+      image: string
+    },
+  }
+>(
+  'users/profileEdit',
+  async ({ userId, data }) => {
+    await axiosApi.patch(serverRoute.sessions + `/${userId}`, data);
+  },
+);

@@ -4,6 +4,7 @@ export interface User {
   role: string;
   displayName: string;
   token: string;
+  image: string
 }
 
 export interface RegisterMutation {
