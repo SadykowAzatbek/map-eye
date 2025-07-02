@@ -1,7 +1,7 @@
 import {
   Body,
   Controller,
-  Delete,
+  Delete, Param, Patch,
   Post,
   Req,
   UnprocessableEntityException,
@@ -83,5 +83,22 @@ export class UsersController {
   @Post('sessions')
   async login(@Req() req: Request) {
     return req.user;
+  }
+
+  @UseGuards(TokenAuthGuard)
+  @Patch('sessions/:id')
+  async editUser(@Param('id') id: string) {
+    const userFind = await this.userModel.findById(id);
+    if (!userFind) {
+      throw new UnprocessableEntityException();
+    }
+    const editUserProfile = await this.userModel.findByIdAndUpdate(
+      id,
+      userFind,
+    );
+    return {
+      message: 'User data updated successfully',
+      editUserProfile,
+    };
   }
 }
