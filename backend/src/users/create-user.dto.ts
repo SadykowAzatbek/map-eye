@@ -5,3 +5,10 @@ export class CreateUserDto {
   role: string;
   image: string;
 }
+
+export class UpdateUserDto {
+  email: string;
+  displayName: string;
+  image: string;
+  token: string;
+}

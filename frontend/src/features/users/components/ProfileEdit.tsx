@@ -1,12 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material';
 import FileInput from '../../../components/FileInput/FileInput.tsx';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import {useAppSelector} from '../../../app/hooks.ts';
-import {selectUser} from '../usersSlice.ts';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
+import { selectUser, selectUserEditLoading } from '../usersSlice.ts';
+import { profileEditThunk } from '../usersThunks.ts';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileEdit = () => {
+  const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
+  const userEditLoading = useAppSelector(selectUserEditLoading);
+  const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
     email: '',
@@ -25,6 +30,15 @@ const ProfileEdit = () => {
     }
   }, [user]);
 
+  const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setUserData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
 
@@ -38,6 +52,11 @@ const ProfileEdit = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (user)
+      dispatch(profileEditThunk(userData));
+
+    navigate('/');
   };
 
   return (
@@ -48,6 +67,7 @@ const ProfileEdit = () => {
         name="email"
         type="email"
         value={userData.email}
+        onChange={inputChangeHandler}
         placeholder="email@email.com"
       />
       <TextField
@@ -56,6 +76,7 @@ const ProfileEdit = () => {
         name="displayName"
         type="text"
         value={userData.displayName}
+        onChange={inputChangeHandler}
       />
       <Typography component="div" sx={{ display: "flex", alignItems: "center" }}>
         <AddAPhotoIcon fontSize="large" />
@@ -63,7 +84,7 @@ const ProfileEdit = () => {
       </Typography>
 
       <Button type="submit">
-        Изменить
+        Изменить {userEditLoading && <CircularProgress />}
       </Button>
     </Box>
   );

@@ -2,28 +2,36 @@ import { GlobalErrorMessage, ValidationError } from '../../types/types';
 import { createSlice } from '@reduxjs/toolkit';
 import {
   login,
-  logout,
+  logout, profileEditThunk,
   register,
 } from './usersThunks';
 import { RootState } from '../../app/store';
-import { User } from '../../types/types.User';
+import { User, UserSecondaryData } from '../../types/types.User';
 
 interface UserState {
   user: User | null;
+  userSecondData: UserSecondaryData;
   registerLoading: boolean;
   registerError: ValidationError | null;
   loginLoading: boolean;
   loginError: GlobalErrorMessage | null;
   logOutLoading: boolean;
+  userEditLoading: boolean;
 }
 
 const initialState: UserState = {
   user: null,
+  userSecondData: {
+    email: '',
+    displayName: '',
+    image: '',
+  },
   registerLoading: false,
   registerError: null,
   loginLoading: false,
   loginError: null,
   logOutLoading: false,
+  userEditLoading: false,
 };
 
 export const usersSlice = createSlice({
@@ -79,6 +87,20 @@ export const usersSlice = createSlice({
       .addCase(logout.rejected, (state) => {
         state.logOutLoading = false;
       });
+
+    builder
+      .addCase(profileEditThunk.pending, (state) => {
+        state.userEditLoading = true;
+        state.registerError = null;
+      })
+      .addCase(profileEditThunk.fulfilled, (state, { payload: data }) => {
+        state.userEditLoading = false;
+        state.user = data.user;
+      })
+      .addCase(profileEditThunk.rejected, (state, { payload: error }) => {
+        state.userEditLoading = false;
+        state.registerError = error || null;
+      })
   },
 });
 
@@ -91,6 +113,7 @@ export const selectRegisterError = (state: RootState) =>
 export const selectLoginLoading = (state: RootState) =>
   state.users.loginLoading;
 export const selectLoginError = (state: RootState) => state.users.loginError;
+export const selectUserEditLoading = (state: RootState) => state.users.userEditLoading;
 export const {
   unsetUser,
   setRegisterError,

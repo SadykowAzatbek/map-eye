@@ -1,19 +1,27 @@
 import {
   Body,
   Controller,
-  Delete, Param, Patch,
+  Delete,
   Post,
+  Put,
   Req,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
-import mongoose, { Model } from 'mongoose';
-import { CreateUserDto } from './create-user.dto';
+import mongoose, { Model, ObjectId } from 'mongoose';
+import { CreateUserDto, UpdateUserDto } from './create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
+
+interface UserRequest extends Request {
+  user: {
+    _id: ObjectId;
+    role: string;
+  };
+}
 
 @Controller('users')
 export class UsersController {
@@ -86,19 +94,25 @@ export class UsersController {
   }
 
   @UseGuards(TokenAuthGuard)
-  @Patch('sessions/:id')
-  async editUser(@Param('id') id: string) {
-    const userFind = await this.userModel.findById(id);
-    if (!userFind) {
+  @Put('sessions/update')
+  async editUser(@Req() req: UserRequest, @Body() userDto: UpdateUserDto) {
+    const userToUpdate = await this.userModel.findById(req.user?._id);
+    if (!userToUpdate) {
       throw new UnprocessableEntityException();
     }
-    const editUserProfile = await this.userModel.findByIdAndUpdate(
-      id,
-      userFind,
-    );
+    Object.assign(userToUpdate, userDto); // копирование свойства одного объекта в другой
+    await userToUpdate.save();
+
     return {
       message: 'User data updated successfully',
-      editUserProfile,
+      user: {
+        _id: userToUpdate._id,
+        email: userToUpdate.email,
+        displayName: userToUpdate.displayName,
+        role: userToUpdate.role,
+        image: userToUpdate.image,
+        token: userToUpdate.token,
+      },
     };
   }
 }

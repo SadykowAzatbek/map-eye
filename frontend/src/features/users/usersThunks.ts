@@ -3,7 +3,7 @@ import axiosApi from '../../utils/axiosApi';
 import { serverRoute } from '../../utils/constants';
 import { isAxiosError } from 'axios';
 import { unsetUser } from './usersSlice';
-import { LoginMutation, RegisterMutation, User } from '../../types/types.User';
+import {LoginMutation, RegisterMutation, RegisterResponse, User, UserSecondaryData} from '../../types/types.User';
 import { GlobalErrorMessage, ValidationError } from '../../types/types';
 
 
@@ -53,18 +53,27 @@ export const logout = createAsyncThunk<void, undefined>(
 );
 
 export const profileEditThunk = createAsyncThunk<
-  void,
+  RegisterResponse,
+  UserSecondaryData,
   {
-    userId: string;
-    data: {
-      email: string,
-      displayName: string,
-      image: string
-    },
+    rejectValue: ValidationError;
   }
 >(
   'users/profileEdit',
-  async ({ userId, data }) => {
-    await axiosApi.patch(serverRoute.sessions + `/${userId}`, data);
+  async (profileMutation, { rejectWithValue }) => {
+    try {
+      const response = await axiosApi.put(
+        `${serverRoute.sessions}update`,
+        profileMutation,
+      );
+      return response.data;
+    } catch (e) {
+      if (isAxiosError(e) && e.response && e.response.status === 422) {
+        return rejectWithValue(e.response.data);
+      }
+
+      throw e;
+    }
+
   },
 );
