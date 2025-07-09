@@ -17,6 +17,7 @@ import { ImagesController } from './images/images.controller';
 import { Image, ImageSchema } from './schemas/image.schema';
 import { Location, LocationSchema } from './schemas/location.schema';
 import { LocationController } from './location/location.controller';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -26,9 +27,12 @@ import { LocationController } from './location/location.controller';
       { name: Institution.name, schema: InstitutionSchema },
       { name: Review.name, schema: ReviewSchema },
       { name: Image.name, schema: ImageSchema },
-      { name: Location.name, schema: LocationSchema }
+      { name: Location.name, schema: LocationSchema },
     ]),
     PassportModule,
+    MulterModule.register({
+      dest: './public/uploads',
+    }),
   ],
   controllers: [
     AppController,

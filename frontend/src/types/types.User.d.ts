@@ -21,7 +21,7 @@ export interface LoginMutation {
 export interface UserSecondaryData {
   email: string;
   displayName: string;
-  image: string;
+  image: File | null;
 }
 
 export interface RegisterResponse {

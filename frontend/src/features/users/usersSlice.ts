@@ -6,11 +6,10 @@ import {
   register,
 } from './usersThunks';
 import { RootState } from '../../app/store';
-import { User, UserSecondaryData } from '../../types/types.User';
+import { User } from '../../types/types.User';
 
 interface UserState {
   user: User | null;
-  userSecondData: UserSecondaryData;
   registerLoading: boolean;
   registerError: ValidationError | null;
   loginLoading: boolean;
@@ -21,11 +20,6 @@ interface UserState {
 
 const initialState: UserState = {
   user: null,
-  userSecondData: {
-    email: '',
-    displayName: '',
-    image: '',
-  },
   registerLoading: false,
   registerError: null,
   loginLoading: false,

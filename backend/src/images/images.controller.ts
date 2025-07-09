@@ -14,7 +14,7 @@ import mongoose, { Model, ObjectId } from 'mongoose';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import path from 'path';
+import * as path from 'path';
 import { Request } from 'express';
 import {
   Institution,
@@ -67,7 +67,7 @@ export class ImagesController {
     const image = new this.imageModel({
       userId: req.user?._id,
       institutionId: getInstitution._id,
-      image: file ? '/uploads/institutions/images' + file.filename : null,
+      image: file ? '/uploads/institutions/' + file.filename : null,
     });
     await image.save();
     return image;

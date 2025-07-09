@@ -62,10 +62,27 @@ export const profileEditThunk = createAsyncThunk<
   'users/profileEdit',
   async (profileMutation, { rejectWithValue }) => {
     try {
+      const formData = new FormData();
+
+      // Добавляем поля в FormData
+      formData.append('email', profileMutation.email);
+      formData.append('displayName', profileMutation.displayName);
+
+      // Если есть файл, добавляем его
+      if (profileMutation.image) {
+        formData.append('image', profileMutation.image);
+      }
+
       const response = await axiosApi.put(
         `${serverRoute.sessions}update`,
-        profileMutation,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
       );
+
       return response.data;
     } catch (e) {
       if (isAxiosError(e) && e.response && e.response.status === 422) {

@@ -6,7 +6,9 @@ import {
   Put,
   Req,
   UnprocessableEntityException,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
@@ -15,6 +17,9 @@ import { CreateUserDto, UpdateUserDto } from './create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
 
 interface UserRequest extends Request {
   user: {
@@ -95,7 +100,24 @@ export class UsersController {
 
   @UseGuards(TokenAuthGuard)
   @Put('sessions/update')
-  async editUser(@Req() req: UserRequest, @Body() userDto: UpdateUserDto) {
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './public/uploads/users',
+        filename: (_req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = path.extname(file.originalname);
+          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+        },
+      }),
+    }),
+  )
+  async editUser(
+    @Req() req: UserRequest,
+    @Body() userDto: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     const userToUpdate = await this.userModel.findById(req.user?._id);
     if (!userToUpdate) {
       throw new UnprocessableEntityException();
@@ -110,7 +132,7 @@ export class UsersController {
         email: userToUpdate.email,
         displayName: userToUpdate.displayName,
         role: userToUpdate.role,
-        image: userToUpdate.image,
+        image: file ? '/uploads/users/' + file.filename : null,
         token: userToUpdate.token,
       },
     };

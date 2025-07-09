@@ -16,7 +16,7 @@ const ProfileEdit = () => {
   const [userData, setUserData] = useState({
     email: '',
     displayName: '',
-    image: '',
+    image: null,
   });
 
   useEffect(() => {
@@ -25,7 +25,6 @@ const ProfileEdit = () => {
         ...prevState,
         email: user.email,
         displayName: user.displayName,
-        image: user.image,
       }));
     }
   }, [user]);
@@ -80,7 +79,7 @@ const ProfileEdit = () => {
       />
       <Typography component="div" sx={{ display: "flex", alignItems: "center" }}>
         <AddAPhotoIcon fontSize="large" />
-        <FileInput name="file" label="Загрузить аватар" onChange={fileInputChangeHandler} />
+        <FileInput name="image" label="Загрузить аватар" onChange={fileInputChangeHandler} />
       </Typography>
 
       <Button type="submit">
