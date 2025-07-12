@@ -59,33 +59,35 @@ const ProfileEdit = () => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} className="opening-edit-profile-window">
-      <TextField
-        required
-        label="Email"
-        name="email"
-        type="email"
-        value={userData.email}
-        onChange={inputChangeHandler}
-        placeholder="email@email.com"
-      />
-      <TextField
-        required
-        label="Отображаемое имя"
-        name="displayName"
-        type="text"
-        value={userData.displayName}
-        onChange={inputChangeHandler}
-      />
-      <Typography component="div" sx={{ display: "flex", alignItems: "center" }}>
-        <AddAPhotoIcon fontSize="large" />
-        <FileInput name="image" label="Загрузить аватар" onChange={fileInputChangeHandler} />
-      </Typography>
+    <div className="profile-edit-gray-background">
+      <Box component="form" onSubmit={handleSubmit} className="opening-edit-profile-window">
+        <TextField
+          required
+          label="Email"
+          name="email"
+          type="email"
+          value={userData.email}
+          onChange={inputChangeHandler}
+          placeholder="email@email.com"
+        />
+        <TextField
+          required
+          label="Отображаемое имя"
+          name="displayName"
+          type="text"
+          value={userData.displayName}
+          onChange={inputChangeHandler}
+        />
+        <Typography component="div" sx={{ display: "flex", alignItems: "center" }}>
+          <AddAPhotoIcon fontSize="large" />
+          <FileInput name="image" label="Загрузить аватар" onChange={fileInputChangeHandler} />
+        </Typography>
 
-      <Button type="submit">
-        Изменить {userEditLoading && <CircularProgress />}
-      </Button>
-    </Box>
+        <Button type="submit">
+          Изменить {userEditLoading && <CircularProgress />}
+        </Button>
+      </Box>
+    </div>
   );
 };
 

@@ -35,7 +35,7 @@ import {
   getMyLocationThunk
 } from '../../../features/maps/locationThunk.ts';
 import Search from '../../Searchs/Search.tsx';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import OpenEditProfileMenu from './OpenEditProfileMenu.tsx';
 
 const Link = styled(NavLink)({
   color: 'inherit',
@@ -58,7 +58,7 @@ type countryTypes = {
   flags: {
     svg: string;
   }
-}
+};
 
 const AppToolbar = () => {
   const location = useLocation();
@@ -68,7 +68,7 @@ const AppToolbar = () => {
   const isLoading = useAppSelector(selectLocationLoading);
   const isLocationUpdateLoading = useAppSelector(selectUpdateLocationLoading);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [locationBlock, setLocationBlock] = useState(false); //открывает и закрывает "Добавить (регион, город)"
+  const [locationBlock, setLocationBlock] = useState(false); //открывает и закрывает выбор региона и города
   const [locationData, setLocationData] = useState<LocationTypes>({
     location: '',
     city: '',
@@ -364,13 +364,7 @@ const AppToolbar = () => {
             )}
 
             {location.pathname === '/profile' && user && (
-              <Typography
-                component="div"
-                className="main-nav"
-                sx={{ cursor: "pointer", p: 1 }}
-              >
-                Редактировать <AccountCircleIcon />
-              </Typography>
+              <OpenEditProfileMenu />
             )}
 
             {user && location.pathname === '/' ? <UserMenu user={user}/> : location.pathname === '/' && <GuestMenu />}
