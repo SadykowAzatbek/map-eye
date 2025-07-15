@@ -70,9 +70,12 @@ export class InstitutionsController {
     }
   }
 
-  @Get()
-  async getInstitutions() {
-    return this.institutionModel.find();
+  @UseGuards(TokenAuthGuard)
+  @Get('my')
+  async getMyInstitutions(@Req() req: UserRequest) {
+    const userId = req.user?._id;
+    const institutions = await this.institutionModel.find({ userId });
+    return institutions;
   }
 
   @Get(':id')
@@ -106,11 +109,11 @@ export class InstitutionsController {
       throw new UnprocessableEntityException('Institution not found');
     }
 
-    if (
-      req.user.role !== 'admin' &&
-      req.user.role !== 'super' &&
-      institution.userId.toString() !== req.user._id.toString()
-    ) {
+    const isOwner = institution.userId.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+    const isSuper = req.user.role === 'super';
+
+    if (!isAdmin && !isSuper && !isOwner) {
       throw new UnauthorizedException();
     }
 
@@ -149,11 +152,11 @@ export class InstitutionsController {
     @Req() req: UserRequest,
   ) {
     const ins = await this.institutionModel.findById(id);
-    if (
-      req.user.role !== 'admin' &&
-      req.user.role !== 'super' &&
-      ins.userId.toString() !== req.user._id.toString()
-    ) {
+    const isOwner = ins.userId.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+    const isSuper = req.user.role === 'super';
+
+    if (!isAdmin && !isSuper && !isOwner) {
       throw new UnprocessableEntityException();
     }
     const updateIns = await this.institutionModel.findByIdAndUpdate(

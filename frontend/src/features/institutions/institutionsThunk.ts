@@ -7,7 +7,7 @@ export const getInstitutions = createAsyncThunk<InstitutionTypes[]>(
   'get/institutions',
   async () => {
     try {
-      const response = await axiosApi.get(serverRoute.institutions);
+      const response = await axiosApi.get(`${serverRoute.institutions}my`);
       return response.data;
     } catch (err) {
       console.error(err);
