@@ -91,11 +91,16 @@ const CreateInstitution = () => {
     );
     const filterData = response.data
       .filter((elem: { addresstype: string }) => elem.addresstype === 'building')
-      .map((elem: { display_name: string, lat: string, lon: string }) => ({
-        displayName: elem.display_name,
-        lat: elem.lat,
-        lon: elem.lon,
-      }));
+      .map((elem: { display_name: string, lat: string, lon: string }) => {
+        const parts = elem.display_name.split(',').map(part => part.trim()); // создает массив из строк, разделяя через запятую
+        const shortAddress = parts.slice(0, 3).join(', ');
+
+        return {
+          displayName: shortAddress,
+          lat: elem.lat,
+          lon: elem.lon,
+        }
+      });
 
     if (filterData.length > 2) {
       setState((prevState) => ({

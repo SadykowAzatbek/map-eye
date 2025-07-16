@@ -82,7 +82,7 @@ export class InstitutionsController {
   async getInstitution(@Param('id') id: string) {
     const objectId = new mongoose.Types.ObjectId(id);
     const institution = await this.institutionModel.findById(id);
-    if (!institution) {
+    if (!institution || (institution && !institution.approved)) {
       throw new UnprocessableEntityException('Institution not found');
     }
 
