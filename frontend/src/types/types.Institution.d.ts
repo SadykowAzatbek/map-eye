@@ -41,4 +41,13 @@ export interface InstitutionTypes {
   approved: boolean;
   address: string;
   coordinates: [number, number];
+  phoneNumber: {
+    number: string;
+    internationalCode: string;
+    socialMedia: {
+      name: string;
+      theres: boolean;
+      logo: string;
+    }[];
+  }[];
 }

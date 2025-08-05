@@ -119,7 +119,7 @@ const CreateInstitution = () => {
   useEffect(() => {
     const fetchUrl = async () => {
       if (locationSelect) {
-        if (state.address) await debouncedSearchStreet(locationSelect.location, locationSelect.city, state.address);
+        if (!state.address.includes(' ')) await debouncedSearchStreet(locationSelect.location, locationSelect.city, state.address);
         // Если место заведение изменено, то адрес сбрасывается
         if (isLocationUpdateLoading) {
           setState((prevState) => ({
@@ -211,7 +211,7 @@ const CreateInstitution = () => {
             internationalCode: countryCode,
             phoneError: isValid,
           }
-          : item
+          : item,
       ),
     }));
   };
@@ -359,7 +359,14 @@ const CreateInstitution = () => {
           </div>
 
           <div style={{ borderTop: "1px solid #ccc" }}>
-            <Button type="button" onClick={addNewPhone} sx={{ mt: 1 }}>Добавить контакт +</Button>
+            <Button
+              type="button"
+              onClick={addNewPhone}
+              disabled={state.phoneNumber.length > 4}
+              sx={{ mt: 1 }}
+            >
+              Добавить контакт +
+            </Button>
             <div className="warning-phone-block">
               <b>При желании оставьте к первому контакту соц. сети, мы можем связаться с вами через них. В дальнейшем их можно изменить.</b>
             </div>
