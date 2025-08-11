@@ -82,7 +82,9 @@ const CreateInstitution = () => {
     ],
   });
 
+  console.log(state);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
+  console.log('searchRESULT ', searchResult);
 
   // Функция для получении списка улиц
   const searchStreet = useCallback(async (location: string, city: string, address: string) => {
@@ -102,24 +104,16 @@ const CreateInstitution = () => {
         }
       });
 
-    if (filterData.length > 2) {
-      setState((prevState) => ({
-        ...prevState,
-        coordinates: [
-          parseFloat(filterData[0].lat),
-          parseFloat(filterData[0].lon),
-        ],
-      }));
-    }
     setSearchResult(filterData);
-  }, [locationSelect, setState, setSearchResult]);
+  }, [locationSelect, setSearchResult]);
 
   const debouncedSearchStreet = useRef(debounce(searchStreet, 300)).current;
 
   useEffect(() => {
     const fetchUrl = async () => {
       if (locationSelect) {
-        if (!state.address.includes(' ')) await debouncedSearchStreet(locationSelect.location, locationSelect.city, state.address);
+        if (state.address.trim() !== '') await debouncedSearchStreet(locationSelect.location, locationSelect.city, state.address);
+
         // Если место заведение изменено, то адрес сбрасывается
         if (isLocationUpdateLoading) {
           setState((prevState) => ({
@@ -129,6 +123,15 @@ const CreateInstitution = () => {
           }));
         }
       }
+
+      searchResult.some((address) => (
+        address.displayName === state.address &&
+        setState((prevState) => ({
+          ...prevState,
+          address: address.displayName,
+          coordinates: [parseFloat(address.lat), parseFloat(address.lon)],
+        }))
+      ));
     };
 
     void fetchUrl();
@@ -520,7 +523,8 @@ const CreateInstitution = () => {
               ) ||
               state.coordinates.every(elem => elem === 0) ||
               state.phoneNumber.some(elem => !elem.phoneError) ||
-              isInstitutionCreateLoading
+              isInstitutionCreateLoading ||
+              searchResult.some(item => item.displayName.toLowerCase() !== state.address.toLowerCase())
             }
           >
             Отправить {isInstitutionCreateLoading ? (<CircularProgress sx={{ ml: 2 }} />) : ''}
