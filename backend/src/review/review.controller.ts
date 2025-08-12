@@ -40,9 +40,14 @@ export class ReviewController {
     private institutionModel: Model<InstitutionDocument>,
   ) {}
 
-  @Get()
-  async getReview(@Query('id') id: string) {
+  @Get(':id')
+  async getReview(@Param('id') id: string) {
     const objectId = new mongoose.Types.ObjectId(id);
+    const approvedInstitution = await this.institutionModel.findById(objectId);
+    // Если заведение не одобрено, то вывод ошибки
+    if (!approvedInstitution.approved) {
+      throw new BadRequestException();
+    }
     const reviews = await this.reviewModel
       .find({ institutionId: objectId })
       .exec();

@@ -78,12 +78,21 @@ export class InstitutionsController {
     return institutions;
   }
 
+  @UseGuards(TokenAuthGuard)
   @Get(':id')
-  async getInstitution(@Param('id') id: string) {
+  async getInstitution(@Req() req: UserRequest, @Param('id') id: string) {
     const objectId = new mongoose.Types.ObjectId(id);
-    const institution = await this.institutionModel.findById(id);
-    if (!institution || (institution && !institution.approved)) {
+    const institution = await this.institutionModel.findById(objectId);
+    if (!institution) {
       throw new UnprocessableEntityException('Institution not found');
+    }
+
+    const isOwner = institution.userId.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+    const isSuper = req.user.role === 'super';
+
+    if (!isAdmin && !isSuper && !isOwner) {
+      throw new UnauthorizedException();
     }
 
     const reviews = await this.reviewModel.find({ institutionId: objectId });
@@ -103,13 +112,14 @@ export class InstitutionsController {
   @UseGuards(TokenAuthGuard)
   @Delete(':id')
   async deleteInstitution(@Req() req: UserRequest, @Param('id') id: string) {
-    const institution = await this.institutionModel.findById(id);
+    const institutionDel = await this.institutionModel.findById(id);
 
-    if (!institution) {
+    if (!institutionDel) {
       throw new UnprocessableEntityException('Institution not found');
     }
 
-    const isOwner = institution.userId.toString() === req.user._id.toString();
+    const isOwner =
+      institutionDel.userId.toString() === req.user._id.toString();
     const isAdmin = req.user.role === 'admin';
     const isSuper = req.user.role === 'super';
 

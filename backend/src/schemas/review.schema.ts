@@ -9,7 +9,7 @@ export class Review {
   @Prop({ required: true, ref: 'Institution' })
   institutionId: mongoose.Types.ObjectId;
 
-  @Prop({ required: true, min: 1, max: 5 })
+  @Prop({ required: true, min: 10, max: 50 })
   grade: number;
 
   @Prop()
