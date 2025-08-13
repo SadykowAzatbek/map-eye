@@ -8,7 +8,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Req,
   UnprocessableEntityException,
   UseGuards,
@@ -79,7 +78,7 @@ export class ReviewController {
     // Проверяем, существует ли заведение
     const getInstitution = await this.institutionModel.findById(objectId);
     if (!getInstitution) {
-      throw new UnprocessableEntityException('Заведение не найдено.');
+      throw new UnprocessableEntityException('Заведение не найдено');
     }
 
     const createReview = new this.reviewModel({

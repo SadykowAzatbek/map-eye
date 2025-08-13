@@ -75,6 +75,29 @@ export class InstitutionsController {
   async getMyInstitutions(@Req() req: UserRequest) {
     const userId = req.user?._id;
     const institutions = await this.institutionModel.find({ userId });
+
+    if (!institutions) {
+      throw new UnprocessableEntityException('Institution not found');
+    }
+
+    const reviewsArray = await Promise.all(
+      institutions.map((institution) =>
+        this.reviewModel.find({ institutionId: institution._id }),
+      ),
+    );
+    institutions.forEach((institution, index) => {
+      const reviews = reviewsArray[index]; // отзывы для конкретного заведения
+      if (reviews.length > 0) {
+        const sum = reviews.reduce(
+          (acc, review) => acc + (review.grade || 0),
+          0,
+        );
+        institution.rating = sum / reviews.length / 10;
+      } else {
+        institution.rating = 0;
+      }
+    });
+
     return institutions;
   }
 
@@ -102,6 +125,7 @@ export class InstitutionsController {
         : 0;
 
     if (institution.rating !== averageRating) {
+      // Стоит ли сохранять данные, или при новом запросе они суммируются?
       institution.rating = averageRating;
       await institution.save();
     }

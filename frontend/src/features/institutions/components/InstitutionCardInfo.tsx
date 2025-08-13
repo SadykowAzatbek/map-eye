@@ -14,7 +14,7 @@ const InstitutionCardInfo: React.FC<Props> = ({ institutions }) => {
   const social = phoneInfo.socialMedia?.[0];
 
   return (
-    <Box sx={{ border: "1px solid #000", p: 3 }}>
+    <Box sx={{ border: "1px solid #000", p: 3, m: 2 }}>
       <Typography component="h6" variant="h5">
         {institutions.name}
       </Typography>
@@ -35,6 +35,7 @@ const InstitutionCardInfo: React.FC<Props> = ({ institutions }) => {
           )}
         </div>
       </Typography>
+      {institutions.rating}
     </Box>
   );
 };

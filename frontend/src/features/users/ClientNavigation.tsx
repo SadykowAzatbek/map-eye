@@ -29,7 +29,7 @@ const ClientNavigation = () => {
       <Typography component="div" variant="h3">
         <b>Мое заведение</b>
       </Typography>
-      <Grid container display="flex" flexWrap="wrap" gap={5}>
+      <Grid container display="flex" flexWrap="wrap">
         {myInstitutions.map((institution) => (
           <Grid item xs={4} key={institution._id}>
             {!myInstitutionsLoading ?
