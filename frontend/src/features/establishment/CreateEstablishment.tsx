@@ -8,12 +8,12 @@ import {
   debounce, Tooltip, CircularProgress,
 } from '@mui/material';
 import { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { Institution } from '../../types/types.Institution';
+import { Establishment } from '../../types/types.Establishments';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
-import { createInstitution } from './institutionsThunk.ts';
+import { createEstablishment } from './EstablishmentThunk.ts';
 import axiosApi from '../../utils/axiosApi.ts';
 import Search from '../../components/Searchs/Search.tsx';
 import SocialMediaPhoneNumber from './components/SocialMediaPhoneNumber.tsx'; // Стили для PhoneInput
@@ -30,7 +30,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useNavigate } from 'react-router-dom';
-import { selectCreateIsLoadingInstitutions } from './institutionSlice.ts';
+import { selectCreateIsLoadingEstablishments } from './EstablishmentSlice.ts';
 import ClearIcon from '@mui/icons-material/Clear';
 import LockIcon from '@mui/icons-material/Lock';
 
@@ -40,11 +40,11 @@ interface searchTable {
   lon: string;
 }
 
-const CreateInstitution = () => {
+const CreateEstablishment = () => {
   const locationSelect = useAppSelector(selectLocation);
   const isLocationLoading = useAppSelector(selectLocationLoading);
   const isLocationUpdateLoading = useAppSelector(selectUpdateLocationLoading);
-  const isInstitutionCreateLoading = useAppSelector(selectCreateIsLoadingInstitutions);
+  const isEstablishmentCreateLoading = useAppSelector(selectCreateIsLoadingEstablishments);
   const navigate = useNavigate();
 
   const defaultSocialMedia = [
@@ -55,7 +55,7 @@ const CreateInstitution = () => {
     { name: 'instagram', theres: false, logo: instagram },
   ];
 
-  const [state, setState] = useState<Institution>({
+  const [state, setState] = useState<Establishment>({
     name: '',
     description: '',
     schedule: [
@@ -82,7 +82,6 @@ const CreateInstitution = () => {
     ],
   });
 
-  console.log(state);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
   console.log('searchRESULT ', searchResult);
 
@@ -278,7 +277,7 @@ const CreateInstitution = () => {
   const formSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
 
-    await dispatch(createInstitution(state));
+    await dispatch(createEstablishment(state));
     navigate('/');
   };
 
@@ -287,7 +286,7 @@ const CreateInstitution = () => {
       <Box
         onSubmit={formSubmitHandler}
         component="form"
-        className="institution-form"
+        className="establishment-form"
       >
         <div className="main-form">
           <Typography component="div" variant="h5" sx={{ borderBottom: "1px solid #ccc" }}><b>Мое заведение:</b></Typography>
@@ -508,7 +507,7 @@ const CreateInstitution = () => {
           </LocalizationProvider>
         </div>
 
-        <div className="institution-btn">
+        <div className="establishment-btn">
           <Button
             type="submit"
             disabled={
@@ -523,11 +522,11 @@ const CreateInstitution = () => {
               ) ||
               state.coordinates.every(elem => elem === 0) ||
               state.phoneNumber.some(elem => !elem.phoneError) ||
-              isInstitutionCreateLoading ||
+              isEstablishmentCreateLoading ||
               searchResult.some(item => item.displayName.toLowerCase() !== state.address.toLowerCase())
             }
           >
-            Отправить {isInstitutionCreateLoading ? (<CircularProgress sx={{ ml: 2 }} />) : ''}
+            Отправить {isEstablishmentCreateLoading ? (<CircularProgress sx={{ ml: 2 }} />) : ''}
           </Button>
         </div>
       </Box>
@@ -535,4 +534,4 @@ const CreateInstitution = () => {
   );
 };
 
-export default CreateInstitution;
+export default CreateEstablishment;

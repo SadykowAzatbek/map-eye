@@ -9,7 +9,7 @@ import {
   persistStore,
 } from 'redux-persist';
 import { PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
-import { institutionReducer } from '../features/institutions/institutionSlice.ts';
+import { establishmentReducer } from '../features/establishment/EstablishmentSlice.ts';
 import { locationReducer } from '../features/maps/locationSlice.ts';
 
 const usersPersistConfig = {
@@ -20,7 +20,7 @@ const usersPersistConfig = {
 
 const rootReducer = combineReducers({
   users: persistReducer(usersPersistConfig, usersReducer),
-  institutions: institutionReducer,
+  establishments: establishmentReducer,
   locations: locationReducer,
 });
 

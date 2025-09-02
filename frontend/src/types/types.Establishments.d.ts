@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-export interface Institution {
+export interface Establishment {
   name: string;
   description: string;
   schedule: {
@@ -26,7 +26,7 @@ export interface Institution {
   }[];
 }
 
-export interface InstitutionTypes {
+export interface EstablishmentTypes {
   _id: string;
   userId: string;
   name: string;

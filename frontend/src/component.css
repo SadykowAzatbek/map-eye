@@ -17,7 +17,7 @@
   width: 150px;
 }
 
-.institution-form {
+.establishment-form {
   margin-top: 100px;
   display: flex;
   flex-wrap: wrap;
@@ -42,7 +42,7 @@
   margin: 1%;
 }
 
-.institution-btn {
+.establishment-btn {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 50px;

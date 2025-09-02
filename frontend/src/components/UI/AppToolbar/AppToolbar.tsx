@@ -19,7 +19,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import DrawerMenu from './DrawerMenu';
 import GuestMenu from './GuestMenu';
 import { appRoutes } from '../../../utils/constants.ts';
-import iconAddInstitutions from '../../../../public/createLocation.png';
+import iconAddEstablishments from '../../../../public/createLocation.png';
 import iconSearch from '../../../../public/searchIcon.png';
 import '../../../component.css';
 import {
@@ -231,7 +231,7 @@ const AppToolbar = () => {
                 Map eye
               </Link>
             </Typography>
-            {location.pathname === '/institution/create' && (
+            {location.pathname === '/establishment/create' && (
               <Box component="form" onSubmit={handleSubmitForm} sx={{ display: "flex", alignItems: "center", mt: 1, mr: 2 }}>
                 {locationBlock ? (
                   <div style={{ display: "flex" }}>
@@ -348,9 +348,9 @@ const AppToolbar = () => {
                       }}
                     />
                   </Link>
-                  <Link to={appRoutes.createInstitution} sx={{mt: 1, mr: 1}}>
+                  <Link to={appRoutes.createEstablishment} sx={{mt: 1, mr: 1}}>
                     <img
-                      src={iconAddInstitutions}
+                      src={iconAddEstablishments}
                       alt="Error photo"
                       title="Создать заведение"
                       style={{
