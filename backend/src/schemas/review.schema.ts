@@ -6,8 +6,8 @@ export class Review {
   @Prop({ required: true, ref: 'User' })
   userId: mongoose.Types.ObjectId;
 
-  @Prop({ required: true, ref: 'Institution' })
-  institutionId: mongoose.Types.ObjectId;
+  @Prop({ required: true, ref: 'Establishment' })
+  establishmentId: mongoose.Types.ObjectId;
 
   @Prop({ required: true, min: 10, max: 50 })
   grade: number;

@@ -17,9 +17,9 @@ import { diskStorage } from 'multer';
 import * as path from 'path';
 import { Request } from 'express';
 import {
-  Institution,
-  InstitutionDocument,
-} from '../schemas/institution.schema';
+  Establishment,
+  EstablishmentDocument,
+} from '../schemas/establishment.schema';
 
 interface UserRequest extends Request {
   user: {
@@ -33,8 +33,8 @@ export class ImagesController {
   constructor(
     @InjectModel(Image.name)
     private imageModel: Model<Image>,
-    @InjectModel(Institution.name)
-    private institutionModel: Model<InstitutionDocument>,
+    @InjectModel(Establishment.name)
+    private establishmentModel: Model<EstablishmentDocument>,
   ) {}
 
   @UseGuards(TokenAuthGuard)
@@ -42,7 +42,7 @@ export class ImagesController {
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './public/uploads/institutions',
+        destination: './public/uploads/establishments',
         filename: (_req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -59,15 +59,15 @@ export class ImagesController {
   ) {
     const objectId = new mongoose.Types.ObjectId(id);
 
-    const getInstitution = await this.institutionModel.findById(objectId);
-    if (!getInstitution) {
+    const getEstablishment = await this.establishmentModel.findById(objectId);
+    if (!getEstablishment) {
       throw new UnprocessableEntityException('Заведение не найдено.');
     }
 
     const image = new this.imageModel({
       userId: req.user?._id,
-      institutionId: getInstitution._id,
-      image: file ? '/uploads/institutions/' + file.filename : null,
+      establishmentId: getEstablishment._id,
+      image: file ? '/uploads/establishments/' + file.filename : null,
     });
     await image.save();
     return image;

@@ -8,8 +8,11 @@ import { AuthService } from './auth/auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/local.strategy';
 import { TokenAuthGuard } from './auth/token-auth.guard';
-import { InstitutionsController } from './institutions/institutions.controller';
-import { Institution, InstitutionSchema } from './schemas/institution.schema';
+import { EstablishmentController } from './establishments/establishment.controller';
+import {
+  Establishment,
+  EstablishmentSchema,
+} from './schemas/establishment.schema';
 import { PermitGuard } from './auth/permit.guard';
 import { ReviewController } from './review/review.controller';
 import { Review, ReviewSchema } from './schemas/review.schema';
@@ -24,7 +27,7 @@ import { MulterModule } from '@nestjs/platform-express';
     MongooseModule.forRoot('mongodb://localhost/map-eye'),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
-      { name: Institution.name, schema: InstitutionSchema },
+      { name: Establishment.name, schema: EstablishmentSchema },
       { name: Review.name, schema: ReviewSchema },
       { name: Image.name, schema: ImageSchema },
       { name: Location.name, schema: LocationSchema },
@@ -37,7 +40,7 @@ import { MulterModule } from '@nestjs/platform-express';
   controllers: [
     AppController,
     UsersController,
-    InstitutionsController,
+    EstablishmentController,
     ReviewController,
     ImagesController,
     LocationController,

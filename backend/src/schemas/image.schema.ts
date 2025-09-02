@@ -5,9 +5,9 @@ import { Schema as mongooseSchema, Document } from 'mongoose';
 export class Image {
   @Prop({
     required: true,
-    ref: 'Institution',
+    ref: 'Establishment',
   })
-  institutionId: mongooseSchema.Types.ObjectId;
+  establishmentId: mongooseSchema.Types.ObjectId;
 
   @Prop({
     required: true,

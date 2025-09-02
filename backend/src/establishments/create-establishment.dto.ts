@@ -1,4 +1,4 @@
-export class CreateInstitutionsDto {
+export class CreateEstablishmentDto {
   name: string;
   description: string;
   schedule: {

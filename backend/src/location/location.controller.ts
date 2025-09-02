@@ -37,7 +37,7 @@ export class LocationController {
   async createLocation(
     @Param('id') id: string | null,
     @Req() req: UserRequest,
-    @Body() institutionDto: CreateLocationDto,
+    @Body() locationDto: CreateLocationDto,
   ) {
     const objectId = new mongoose.Types.ObjectId(id);
 
@@ -54,9 +54,9 @@ export class LocationController {
     //создаем location
     const location = new this.locationModel({
       userId: req.user?._id,
-      location: institutionDto.location,
-      city: institutionDto.city,
-      altSpellings: institutionDto.altSpellings,
+      location: locationDto.location,
+      city: locationDto.city,
+      altSpellings: locationDto.altSpellings,
     });
     await location.save();
     return location;

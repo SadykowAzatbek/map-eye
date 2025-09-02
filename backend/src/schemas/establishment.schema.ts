@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Schema as mongooseSchema, Document } from 'mongoose';
 
 @Schema()
-export class Institution {
+export class Establishment {
   @Prop({
     required: true,
     ref: 'User',
@@ -126,6 +126,6 @@ export class Institution {
   }[];
 }
 
-export const InstitutionSchema = SchemaFactory.createForClass(Institution);
+export const EstablishmentSchema = SchemaFactory.createForClass(Establishment);
 
-export type InstitutionDocument = Institution & Document;
+export type EstablishmentDocument = Establishment & Document;

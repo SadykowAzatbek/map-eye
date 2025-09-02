@@ -16,9 +16,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Review, ReviewDocument } from '../schemas/review.schema';
 import mongoose, { Model } from 'mongoose';
 import {
-  Institution,
-  InstitutionDocument,
-} from '../schemas/institution.schema';
+  Establishment,
+  EstablishmentDocument,
+} from '../schemas/establishment.schema';
 import { CreateReviewsDto } from './create-reviews.dto';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
 import { Request } from 'express';
@@ -35,20 +35,21 @@ export class ReviewController {
   constructor(
     @InjectModel(Review.name)
     private reviewModel: Model<ReviewDocument>,
-    @InjectModel(Institution.name)
-    private institutionModel: Model<InstitutionDocument>,
+    @InjectModel(Establishment.name)
+    private establishmentModel: Model<EstablishmentDocument>,
   ) {}
 
   @Get(':id')
   async getReview(@Param('id') id: string) {
     const objectId = new mongoose.Types.ObjectId(id);
-    const approvedInstitution = await this.institutionModel.findById(objectId);
+    const approvedEstablishment =
+      await this.establishmentModel.findById(objectId);
     // Если заведение не одобрено, то вывод ошибки
-    if (!approvedInstitution.approved) {
+    if (!approvedEstablishment.approved) {
       throw new BadRequestException();
     }
     const reviews = await this.reviewModel
-      .find({ institutionId: objectId })
+      .find({ establishmentId: objectId })
       .exec();
     if (!reviews) {
       throw new NotFoundException('Reviews not found');
@@ -68,7 +69,7 @@ export class ReviewController {
     // Проверяем, существует ли уже отзыв от данного пользователя на данное заведение
     const existingReview = await this.reviewModel.findOne({
       userId: req.user._id,
-      institutionId: objectId,
+      establishmentId: objectId,
     });
 
     if (existingReview) {
@@ -76,14 +77,14 @@ export class ReviewController {
     }
 
     // Проверяем, существует ли заведение
-    const getInstitution = await this.institutionModel.findById(objectId);
-    if (!getInstitution) {
+    const getEstablishment = await this.establishmentModel.findById(objectId);
+    if (!getEstablishment) {
       throw new UnprocessableEntityException('Заведение не найдено');
     }
 
     const createReview = new this.reviewModel({
       userId: req.user._id,
-      institutionId: getInstitution._id,
+      establishmentId: getEstablishment._id,
       grade: reviewDto.grade,
       description: reviewDto.description,
     });
