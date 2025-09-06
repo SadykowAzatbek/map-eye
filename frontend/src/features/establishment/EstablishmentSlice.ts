@@ -1,10 +1,10 @@
-import { EstablishmentTypes } from '../../types/types.Establishments';
+import { EstablishmentApi } from '../../types/types.Establishments';
 import { createSlice } from '@reduxjs/toolkit';
 import { createEstablishment, getEstablishment } from './EstablishmentThunk.ts';
 import { RootState } from '../../app/store.ts';
 
 interface MapState {
-  establishments: EstablishmentTypes[];
+  establishments: EstablishmentApi[];
   isLoading: boolean;
   createIsLoading: boolean;
 }

@@ -3,10 +3,10 @@ import { TextField, Tooltip } from '@mui/material';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import Search from '../../../components/Searchs/Search.tsx';
 import { LocationTypes } from '../../../types/types.Location.ts';
-import { Establishment, searchTable } from '../../../types/types.Establishments';
+import { EstablishmentForm, searchTable } from '../../../types/types.Establishments';
 
 interface Props {
-  state: Establishment;
+  state: EstablishmentForm;
   location: null | LocationTypes;
   inputChangeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
   isLocationUpdateLoading: boolean;

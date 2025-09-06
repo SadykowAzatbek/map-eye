@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Establishment, EstablishmentTypes } from '../../types/types.Establishments';
+import { EstablishmentForm, EstablishmentApi } from '../../types/types.Establishments';
 import { serverRoute } from '../../utils/constants.ts';
 import axiosApi from '../../utils/axiosApi.ts';
 
-export const getEstablishment = createAsyncThunk<EstablishmentTypes[]>(
+export const getEstablishment = createAsyncThunk<EstablishmentApi[]>(
   'get/establishment',
   async () => {
     try {
@@ -15,7 +15,7 @@ export const getEstablishment = createAsyncThunk<EstablishmentTypes[]>(
   }
 );
 
-export const createEstablishment = createAsyncThunk<void, Establishment>(
+export const createEstablishment = createAsyncThunk<void, EstablishmentForm>(
   'create/establishment',
   async (data) => {
     try {

@@ -1,13 +1,13 @@
 import { useAppSelector } from '../../../app/hooks.ts';
 import { Box, Typography } from '@mui/material';
 import { selectLocation } from '../../maps/locationSlice.ts';
-import { EstablishmentTypes } from '../../../types/types.Establishments';
+import { EstablishmentApi } from '../../../types/types.Establishments';
 import StarIcon from '@mui/icons-material/Star';
-import StarHalfIcon from '@mui/icons-material/StarHalf';
+// import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 interface Props {
-  establishments: EstablishmentTypes;
+  establishments: EstablishmentApi;
 }
 
 const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {

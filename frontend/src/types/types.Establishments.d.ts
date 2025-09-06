@@ -1,55 +1,55 @@
 import dayjs from 'dayjs';
 
-export interface Establishment {
+export interface EstablishmentBase {
   name: string;
   description: string;
-  schedule: {
-    day: string,
-    open: boolean,
-    start: dayjs.Dayjs;
-    finish: dayjs.Dayjs;
-    twentyFourHours: boolean,
-  }[];
   address: string;
   coordinates: [number, number];
-  phoneNumber: {
-    id: number;
-    number: string;
-    internationalCode: string;
-    phoneError: boolean;
-    socialOpen: boolean;
-    socialMedia: {
-      name: string;
-      theres: boolean;
-      logo: string;
-    }[];
-  }[];
 }
 
-export interface EstablishmentTypes {
+export interface WorkSchedule {
+  day: string;
+  open: boolean;
+  start: dayjs.Dayjs;
+  finish: dayjs.Dayjs;
+  twentyFourHours: boolean;
+}
+
+interface SocialMediaTypes {
+  name: string;
+  theres: boolean;
+  logo: string;
+}
+
+
+export interface Phone {
+  number: string;
+  internationalCode: string;
+  socialMedia: SocialMediaTypes[];
+}
+
+export interface EstablishmentForm {
+  name: string;
+  description: string;
+  address: string;
+  coordinates: [number, number];
+  schedule: WorkSchedule[];
+  phoneNumber: (Phone & {
+    id: number;
+    phoneError: boolean;
+    socialOpen: boolean;
+  })[];
+}
+
+export interface EstablishmentApi {
   _id: string;
   userId: string;
   name: string;
   description: string;
-  schedule: {
-    day: string,
-    open: boolean,
-    start: dayjs.Dayjs;
-    finish: dayjs.Dayjs;
-  }[];
-  rating: number;
-  approved: boolean;
   address: string;
   coordinates: [number, number];
-  phoneNumber: {
-    number: string;
-    internationalCode: string;
-    socialMedia: {
-      name: string;
-      theres: boolean;
-      logo: string;
-    }[];
-  }[];
+  schedule: WorkSchedule[];
+  phoneNumber: Phone[];
 }
 
 export interface searchTable {

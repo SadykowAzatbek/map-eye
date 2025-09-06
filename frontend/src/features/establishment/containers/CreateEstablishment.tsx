@@ -5,33 +5,30 @@ import {
   Button,
   Typography,
   Box,
-  debounce, Tooltip, CircularProgress,
+  debounce,
+  CircularProgress,
 } from '@mui/material';
 import { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { Establishment, searchTable } from '../../../types/types.Establishments';
+import { EstablishmentForm, searchTable } from '../../../types/types.Establishments';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
 import { createEstablishment } from '../EstablishmentThunk.ts';
 import axiosApi from '../../../utils/axiosApi.ts';
-import SocialMediaPhoneNumber from '../components/SocialMediaPhoneNumber.tsx'; // Стили для PhoneInput
 import phone from '../../../../public/2121.png';
 import whatsapp from '../../../../public/whatsapp.png';
 import telegram from '../../../../public/telegram.png';
 import facebook from '../../../../public/facebook.png';
 import instagram from '../../../../public/instagram.png';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { selectLocation, selectLocationLoading, selectUpdateLocationLoading } from '../../maps/locationSlice.ts';
-import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useNavigate } from 'react-router-dom';
 import { selectCreateIsLoadingEstablishments } from '../EstablishmentSlice.ts';
-import ClearIcon from '@mui/icons-material/Clear';
 import LockIcon from '@mui/icons-material/Lock';
 import AddressSearch from '../components/AddressSearch.tsx';
+import PhoneBlock from '../components/PhoneBlock.tsx';
 
 const CreateEstablishment = () => {
   const locationSelect = useAppSelector(selectLocation);
@@ -48,7 +45,7 @@ const CreateEstablishment = () => {
     { name: 'instagram', theres: false, logo: instagram },
   ];
 
-  const [state, setState] = useState<Establishment>({
+  const [state, setState] = useState<EstablishmentForm>({
     name: '',
     description: '',
     schedule: [
@@ -318,76 +315,16 @@ const CreateEstablishment = () => {
             onClickAddress={onClickAddress}
           />
 
-          <div style={{ borderTop: "1px solid #ccc" }}>
-            <Button
-              type="button"
-              onClick={addNewPhone}
-              disabled={state.phoneNumber.length > 4}
-              sx={{ mt: 1 }}
-            >
-              Добавить контакт +
-            </Button>
-            <div className="warning-phone-block">
-              <b>При желании оставьте к первому контакту соц. сети, мы можем связаться с вами через них. В дальнейшем их можно изменить.</b>
-            </div>
-            {state.phoneNumber.map((elem, index) => (
-              <div key={elem.id} className="phone-block">
-                <PhoneInput
-                  country={
-                    isLocationLoading || !locationSelect?.altSpellings?.length
-                      ? ''
-                      : locationSelect.altSpellings[0].toLowerCase()
-                  }
-                  value={elem.number}
-                  onChange={(value) => handlePhoneChange(value, index)}
-                  enableSearch={true}
-                  inputProps={{
-                    className: `phone-input ${!elem.phoneError ? 'error-border' : 'phone-input'}`,
-                  }}
-                />
-                {!elem.phoneError && elem.number && (
-                  <span style={{ color: 'red', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
-                  Введите верный формат телефона
-                </span>
-                )}
-                <Tooltip title={ elem.socialOpen ? 'Скрыть' : 'Добавить соцсети'}>
-                  <div
-                    onClick={() => openSocialList(index)}
-                    className={!elem.socialOpen ? 'open-close-style open-close-margin' : 'open-close-style open-close-new-margin'}
-                  >
-                    {elem.socialOpen ?
-                      <KeyboardArrowLeftIcon /> :
-                      <KeyboardArrowRightIcon />
-                    }
-                  </div>
-                </Tooltip>
-                {elem.socialOpen && <div className="main-social-block">
-                  {elem.socialMedia.map((socialItem, i) => (
-                    <SocialMediaPhoneNumber
-                      key={i}
-                      name={socialItem.name}
-                      logo={socialItem.logo}
-                      open={elem.socialOpen}
-                      selected={() => selectedSocialMedia(index, i)}
-                      selectClass={{ background: socialItem.theres ? '#32CD32' : '' }}
-                    />
-                  ))}
-                </div>}
-                <Button
-                  type="button"
-                  sx={{
-                    color: "#656565",
-                    '&:hover': {
-                      color: "#000"
-                    }
-                  }}
-                  onClick={() => deletePhone(elem.id)}
-                >
-                  <ClearIcon />
-                </Button>
-              </div>
-            ))}
-          </div>
+          <PhoneBlock
+            state={state}
+            addNewPhone={addNewPhone}
+            isLocationLoading={isLocationLoading}
+            location={locationSelect}
+            handlePhoneChange={handlePhoneChange}
+            openSocialList={openSocialList}
+            selectedSocialMedia={selectedSocialMedia}
+            deletePhone={deletePhone}
+          />
         </div>
 
         <div className="form-block">
