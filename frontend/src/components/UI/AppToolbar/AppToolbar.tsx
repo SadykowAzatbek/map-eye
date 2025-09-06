@@ -251,10 +251,10 @@ const AppToolbar = () => {
                           !region.some(item => item.translations.rus.common.toLowerCase().includes(locationData.location.toLowerCase())) &&
                           'Страна не выбрана'
                         }
-                        sx={{background: '#fff' }}
+                        sx={{ background: '#fff' }}
                       />
                       {isFocused && (
-                        <div style={{position: "absolute", width: "100%", background: "#fff"}}>
+                        <div style={{ position: "absolute", width: "100%", background: "#fff" }}>
                           {region.map((elem, i) => (
                             elem.translations.rus.common !== locationData.location &&
                             <Search
@@ -278,7 +278,7 @@ const AppToolbar = () => {
                             onChange={handleRegionChange}
                             onFocus={() => setIsFocusedCity(true)}
                             onBlur={() => setIsFocusedCity(false)}
-                            sx={{background: '#fff'}}
+                            sx={{ background: '#fff' }}
                             disabled={isLoading || locationData.location === ''}
                             error={!cities.some(item => item.name.toLowerCase().includes(locationData.city.toLocaleLowerCase()))}
                             helperText={
@@ -287,7 +287,7 @@ const AppToolbar = () => {
                             }
                           />
                           {isFocusedCity && (
-                            <div style={{position: 'absolute', width: '100%', background: '#fff'}}>
+                            <div style={{ position: 'absolute', width: '100%', background: '#fff' }}>
                               {cities.map((elem, i) => (
                                 elem.name !== locationData.city &&
                                 <Search
@@ -314,7 +314,7 @@ const AppToolbar = () => {
                           !cities.some(item => item.name.toLowerCase().includes(locationData.city.toLocaleLowerCase())) // точно так же как и с странами
                         }
                       >
-                        сохранить {isLocationUpdateLoading && (<CircularProgress sx={{ml: 1}}/>)}
+                        сохранить {isLocationUpdateLoading && (<CircularProgress sx={{ ml: 1 }}/>)}
                       </Button>
                       <Button type="button" onClick={() => setLocationBlock(false)}>
                         отмена
@@ -348,7 +348,7 @@ const AppToolbar = () => {
                       }}
                     />
                   </Link>
-                  <Link to={appRoutes.createEstablishment} sx={{mt: 1, mr: 1}}>
+                  <Link to={appRoutes.createEstablishment} sx={{ mt: 1, mr: 1 }}>
                     <img
                       src={iconAddEstablishments}
                       alt="Error photo"

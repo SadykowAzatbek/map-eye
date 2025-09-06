@@ -1,6 +1,6 @@
 import ProfileEdit from './components/ProfileEdit.tsx';
 import { useOpenEditProfile } from '../../components/UI/AppToolbar/components/UseOpenEditProfile.tsx';
-import {Box, CircularProgress, Grid, Typography} from '@mui/material';
+import { Box, CircularProgress, Grid, Typography } from '@mui/material';
 import EstablishmentCardInfo from '../establishment/components/EstablishmentCardInfo.tsx';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
 import { selectEstablishments, selectLoadingEstablishments } from '../establishment/EstablishmentSlice.ts';

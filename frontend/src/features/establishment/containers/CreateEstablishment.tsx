@@ -8,37 +8,30 @@ import {
   debounce, Tooltip, CircularProgress,
 } from '@mui/material';
 import { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { Establishment } from '../../types/types.Establishments';
+import { Establishment, searchTable } from '../../../types/types.Establishments';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
-import { createEstablishment } from './EstablishmentThunk.ts';
-import axiosApi from '../../utils/axiosApi.ts';
-import Search from '../../components/Searchs/Search.tsx';
-import SocialMediaPhoneNumber from './components/SocialMediaPhoneNumber.tsx'; // Стили для PhoneInput
-import phone from '../../../public/2121.png';
-import whatsapp from '../../../public/whatsapp.png';
-import telegram from '../../../public/telegram.png';
-import facebook from '../../../public/facebook.png';
-import instagram from '../../../public/instagram.png';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
+import { createEstablishment } from '../EstablishmentThunk.ts';
+import axiosApi from '../../../utils/axiosApi.ts';
+import SocialMediaPhoneNumber from '../components/SocialMediaPhoneNumber.tsx'; // Стили для PhoneInput
+import phone from '../../../../public/2121.png';
+import whatsapp from '../../../../public/whatsapp.png';
+import telegram from '../../../../public/telegram.png';
+import facebook from '../../../../public/facebook.png';
+import instagram from '../../../../public/instagram.png';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import { selectLocation, selectLocationLoading, selectUpdateLocationLoading } from '../maps/locationSlice.ts';
+import { selectLocation, selectLocationLoading, selectUpdateLocationLoading } from '../../maps/locationSlice.ts';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useNavigate } from 'react-router-dom';
-import { selectCreateIsLoadingEstablishments } from './EstablishmentSlice.ts';
+import { selectCreateIsLoadingEstablishments } from '../EstablishmentSlice.ts';
 import ClearIcon from '@mui/icons-material/Clear';
 import LockIcon from '@mui/icons-material/Lock';
-
-interface searchTable {
-  displayName: string;
-  lat: string;
-  lon: string;
-}
+import AddressSearch from '../components/AddressSearch.tsx';
 
 const CreateEstablishment = () => {
   const locationSelect = useAppSelector(selectLocation);
@@ -83,7 +76,8 @@ const CreateEstablishment = () => {
   });
 
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
-  console.log('searchRESULT ', searchResult);
+  console.log(state);
+  console.log(searchResult);
 
   // Функция для получении списка улиц
   const searchStreet = useCallback(async (location: string, city: string, address: string) => {
@@ -157,7 +151,7 @@ const CreateEstablishment = () => {
       setState((prevState) => ({
         ...prevState,
         schedule: prevState.schedule.map((item, i) =>
-          i === index ? {...item, [name]: value } : item
+          i === index ? { ...item, [name]: value } : item
         ),
       }));
     }
@@ -167,7 +161,7 @@ const CreateEstablishment = () => {
     setState((prevState) => ({
       ...prevState,
       schedule: prevState.schedule.map((item, i) =>
-        i === index ? { ...item, open: !item.open } : item // находит по индексу и изменяет содержимое ключа open на противоположное
+        i === index ? { ...item, open: !item.open } : item // находит по индексу и изменяет булевое значение
       ),
     }));
   };
@@ -315,50 +309,14 @@ const CreateEstablishment = () => {
             onChange={inputChangeHandler}
           />
 
-          <div>
-            <div style={{ display: 'flex' }}>
-              <TextField
-                fullWidth
-                required
-                label="Адрес заведение (номер здании, улица)"
-                name="address"
-                type="text"
-                autoComplete="off"
-                value={state.address}
-                onChange={inputChangeHandler}
-                error={
-                  state.address.trim() === '' && state.address.includes(' ') ||
-                  state.address !== '' && state.coordinates.every(elem => elem === 0)
-                }
-                helperText={
-                  state.address.trim() === '' && state.address.includes(' ')
-                    ? 'Поле не должно быть пустым или содержать только пробелы!'
-                    : state.address !== '' && state.coordinates.every(elem => elem === 0)
-                      ? 'Введите достоверный адрес'
-                      : ''
-                }
-                disabled={
-                  !locationSelect ||
-                  locationSelect?.city === '' ||
-                  isLocationUpdateLoading
-                }
-              />
-              <Tooltip
-                title={
-                  locationSelect && locationSelect.city ?
-                    `Ваше заведение в городе ${locationSelect.city}? Иначе поменяйте страну и/или город в правом верхнем углу`
-                    : 'Добавьте страну или/и город. Это можно сделать в правом верхнем углу'
-                }
-                sx={{ border: '2px solid #000', ml: 1, mt: 2, borderRadius: 2 }}
-              >
-                <PriorityHighIcon />
-              </Tooltip>
-            </div>
-            {searchResult.map((elem, i) => (
-              elem.displayName !== state.address &&
-              <Search key={i} displayName={elem.displayName} onClick={() => onClickAddress(elem.displayName, parseFloat(elem.lat), parseFloat(elem.lon))}/>
-            ))}
-          </div>
+          <AddressSearch
+            state={state}
+            location={locationSelect}
+            inputChangeHandler={inputChangeHandler}
+            isLocationUpdateLoading={isLocationUpdateLoading}
+            searchResult={searchResult}
+            onClickAddress={onClickAddress}
+          />
 
           <div style={{ borderTop: "1px solid #ccc" }}>
             <Button
@@ -467,7 +425,7 @@ const CreateEstablishment = () => {
                   sx={{ borderBottom: '1px solid #ccc', width: '50%' }}
                 />
                 {elem.open ? (
-                  <div style={{display: 'inline-block'}}>
+                  <div style={{ display: 'inline-block' }}>
                     <TimePicker
                       className="time-styles"
                       label="Начало"
@@ -523,7 +481,7 @@ const CreateEstablishment = () => {
               state.coordinates.every(elem => elem === 0) ||
               state.phoneNumber.some(elem => !elem.phoneError) ||
               isEstablishmentCreateLoading ||
-              searchResult.some(item => item.displayName.toLowerCase() !== state.address.toLowerCase())
+              !searchResult.some(item => item.displayName.toLowerCase() === state.address.toLowerCase())
             }
           >
             Отправить {isEstablishmentCreateLoading ? (<CircularProgress sx={{ ml: 2 }} />) : ''}

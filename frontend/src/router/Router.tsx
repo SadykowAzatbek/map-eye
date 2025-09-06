@@ -5,7 +5,7 @@ import Login from '../features/users/Login';
 import { appRoutes } from '../utils/constants';
 import NotFound from '../components/UI/NotFound/NotFound';
 import Map from '../features/maps/Map.tsx';
-import CreateEstablishment from '../features/establishment/CreateEstablishment.tsx';
+import CreateEstablishment from '../features/establishment/containers/CreateEstablishment.tsx';
 import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute.tsx';
 import ClientNavigation from '../features/users/ClientNavigation.tsx';
 

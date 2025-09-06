@@ -30,7 +30,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
       </Typography>
 
       <Typography component="div">
-        {`${establishments.description.split(' ', 8).join(' ')}${establishments.description.length > 50 ? '...' : ''}`}
+        {`${establishments.description.split(' ', 14).join(' ')}${establishments.description.length > 100 ? '...' : ''}`}
       </Typography>
 
       <Typography component="div">
@@ -43,13 +43,13 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
       </Typography>
 
       <Typography component="div" display="flex">
-        {ratingArrStar.map(() => (
-          <div>
+        {ratingArrStar.map((item) => (
+          <div key={item}>
             <StarIcon />
           </div>
         ))}
-        {voidStar.map(() => (
-          <div>
+        {voidStar.map((item) => (
+          <div key={item}>
             <StarBorderIcon />
           </div>
         ))}

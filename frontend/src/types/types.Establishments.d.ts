@@ -51,3 +51,9 @@ export interface EstablishmentTypes {
     }[];
   }[];
 }
+
+export interface searchTable {
+  displayName: string;
+  lat: string;
+  lon: string;
+}
