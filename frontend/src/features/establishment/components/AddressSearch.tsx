@@ -3,10 +3,11 @@ import { TextField, Tooltip } from '@mui/material';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import Search from '../../../components/Searchs/Search.tsx';
 import { LocationTypes } from '../../../types/types.Location.ts';
-import { EstablishmentForm, searchTable } from '../../../types/types.Establishments';
+import { searchTable } from '../../../types/types.Establishments';
 
 interface Props {
-  state: EstablishmentForm;
+  address: string;
+  coordinates: [number, number];
   location: null | LocationTypes;
   inputChangeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
   isLocationUpdateLoading: boolean;
@@ -15,7 +16,8 @@ interface Props {
 }
 
 const AddressSearch: React.FC<Props> = ({
-  state,
+  address,
+  coordinates,
   inputChangeHandler,
   location,
   isLocationUpdateLoading,
@@ -32,16 +34,16 @@ const AddressSearch: React.FC<Props> = ({
           name="address"
           type="text"
           autoComplete="off"
-          value={state.address}
+          value={address}
           onChange={inputChangeHandler}
           error={
-            state.address.trim() === '' && state.address.includes(' ') ||
-            state.address !== '' && state.coordinates.every(elem => elem === 0)
+            address.trim() === '' && address.includes(' ') ||
+            address !== '' && coordinates.every(elem => elem === 0)
           }
           helperText={
-            state.address.trim() === '' && state.address.includes(' ')
+            address.trim() === '' && address.includes(' ')
               ? 'Поле не должно быть пустым или содержать только пробелы!'
-              : state.address !== '' && state.coordinates.every(elem => elem === 0)
+              : address !== '' && coordinates.every(elem => elem === 0)
                 ? 'Введите достоверный адрес'
                 : ''
           }
@@ -63,7 +65,7 @@ const AddressSearch: React.FC<Props> = ({
         </Tooltip>
       </div>
       {searchResult.map((elem, i) => (
-        elem.displayName !== state.address &&
+        elem.displayName !== address &&
         <Search key={i} displayName={elem.displayName} onClick={() => onClickAddress(elem.displayName, parseFloat(elem.lat), parseFloat(elem.lon))}/>
       ))}
     </div>

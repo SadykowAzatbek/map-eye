@@ -4,12 +4,12 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import SocialMediaPhoneNumber from './SocialMediaPhoneNumber.tsx';
 import ClearIcon from '@mui/icons-material/Clear';
-import { EstablishmentForm } from '../../../types/types.Establishments';
+import { PhoneMethod } from '../../../types/types.Establishments';
 import React from 'react';
 import { LocationTypes } from '../../../types/types.Location.ts';
 
 interface Props {
-  state: EstablishmentForm;
+  phoneNumber: PhoneMethod[];
   addNewPhone: () => void;
   isLocationLoading: boolean;
   location: null | LocationTypes;
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const PhoneBlock: React.FC<Props> = ({
-  state,
+  phoneNumber,
   addNewPhone,
   isLocationLoading,
   location,
@@ -34,7 +34,7 @@ const PhoneBlock: React.FC<Props> = ({
       <Button
         type="button"
         onClick={addNewPhone}
-        disabled={state.phoneNumber.length > 4}
+        disabled={phoneNumber.length > 4}
         sx={{ mt: 1 }}
       >
         Добавить контакт +
@@ -42,7 +42,7 @@ const PhoneBlock: React.FC<Props> = ({
       <div className="warning-phone-block">
         <b>При желании оставьте к первому контакту соц. сети, мы можем связаться с вами через них. В дальнейшем их можно изменить.</b>
       </div>
-      {state.phoneNumber.map((elem, index) => (
+      {phoneNumber.map((elem, index) => (
         <div key={elem.id} className="phone-block">
           <PhoneInput
             country={
@@ -54,10 +54,10 @@ const PhoneBlock: React.FC<Props> = ({
             onChange={(value) => handlePhoneChange(value, index)}
             enableSearch={true}
             inputProps={{
-              className: `phone-input ${!elem.phoneError ? 'error-border' : 'phone-input'}`,
+              className: `phone-input ${!elem.isValidPhone ? 'error-border' : 'phone-input'}`,
             }}
           />
-          {!elem.phoneError && elem.number && (
+          {!elem.isValidPhone && elem.number && (
             <span style={{ color: 'red', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
                   Введите верный формат телефона
                 </span>

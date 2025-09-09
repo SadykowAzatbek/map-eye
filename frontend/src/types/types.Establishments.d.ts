@@ -22,10 +22,16 @@ interface SocialMediaTypes {
 }
 
 
-export interface Phone {
+export interface PhoneTypes {
   number: string;
   internationalCode: string;
   socialMedia: SocialMediaTypes[];
+}
+
+export interface PhoneMethod extends PhoneTypes {
+  id: number;
+  isValidPhone: boolean;
+  socialOpen: boolean;
 }
 
 export interface EstablishmentForm {
@@ -34,11 +40,7 @@ export interface EstablishmentForm {
   address: string;
   coordinates: [number, number];
   schedule: WorkSchedule[];
-  phoneNumber: (Phone & {
-    id: number;
-    phoneError: boolean;
-    socialOpen: boolean;
-  })[];
+  phoneNumber: PhoneMethod[];
 }
 
 export interface EstablishmentApi {
@@ -48,8 +50,9 @@ export interface EstablishmentApi {
   description: string;
   address: string;
   coordinates: [number, number];
+  rating: number;
   schedule: WorkSchedule[];
-  phoneNumber: Phone[];
+  phoneNumber: PhoneTypes[];
 }
 
 export interface searchTable {

@@ -4,12 +4,12 @@ import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import LockIcon from '@mui/icons-material/Lock';
 import { Dayjs } from 'dayjs';
-import { EstablishmentForm } from '../../../types/types.Establishments';
+import { WorkSchedule } from '../../../types/types.Establishments';
 
 interface Props {
   everyoneTime: { start: Dayjs, finish: Dayjs };
   handleSetTimeEveryone: (name: 'start' | 'finish', value: Dayjs | null) => void;
-  state: EstablishmentForm;
+  schedule: WorkSchedule[];
   handleScheduleChange: (index: number) => void;
   handleTimeChange: (index: number, name: 'start' | 'finish', value: Dayjs | null) => void;
   handleTwentyHoursChange: (index: number) => void;
@@ -18,7 +18,7 @@ interface Props {
 const ScheduleBlock: React.FC<Props> = ({
   everyoneTime,
   handleSetTimeEveryone,
-  state,
+  schedule,
   handleScheduleChange,
   handleTimeChange,
   handleTwentyHoursChange,
@@ -45,7 +45,7 @@ const ScheduleBlock: React.FC<Props> = ({
 
       <Typography component="div" sx={{ mt: 3 }}><b>Рабочие дни:</b></Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        {state.schedule.map((elem, index) => (
+        {schedule.map((elem, index) => (
           <div key={elem.day} className="form-time">
             <FormControlLabel
               key={elem.day}

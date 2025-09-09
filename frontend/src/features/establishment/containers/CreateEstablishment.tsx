@@ -11,12 +11,6 @@ import { EstablishmentForm, searchTable } from '../../../types/types.Establishme
 import dayjs, { Dayjs } from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
 import { createEstablishment } from '../EstablishmentThunk.ts';
-import axiosApi from '../../../utils/axiosApi.ts';
-import phone from '../../../../public/2121.png';
-import whatsapp from '../../../../public/whatsapp.png';
-import telegram from '../../../../public/telegram.png';
-import facebook from '../../../../public/facebook.png';
-import instagram from '../../../../public/instagram.png';
 import { selectLocation, selectLocationLoading, selectUpdateLocationLoading } from '../../maps/locationSlice.ts';
 import 'react-phone-input-2/lib/style.css';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
@@ -25,73 +19,29 @@ import { selectCreateIsLoadingEstablishments } from '../EstablishmentSlice.ts';
 import AddressSearch from '../components/AddressSearch.tsx';
 import PhoneBlock from '../components/PhoneBlock.tsx';
 import ScheduleBlock from '../components/ScheduleBlock.tsx';
+import { initialEstablishmentState } from '../config/initialEstablishmentState.ts';
+import { defaultSocialMedia } from '../config/socialMedia.ts';
+import { searchStreetService } from '../services/establishmentService.ts';
+import { isEstablishmentFormInvalid } from '../services/establishmentValidation.ts';
 
 const CreateEstablishment = () => {
+  const dispatch = useAppDispatch();
   const locationSelect = useAppSelector(selectLocation);
   const isLocationLoading = useAppSelector(selectLocationLoading);
   const isLocationUpdateLoading = useAppSelector(selectUpdateLocationLoading);
   const isEstablishmentCreateLoading = useAppSelector(selectCreateIsLoadingEstablishments);
   const navigate = useNavigate();
 
-  const defaultSocialMedia = [
-    { name: 'phone', theres: true, logo: phone },
-    { name: 'whatsapp', theres: false, logo: whatsapp },
-    { name: 'telegram', theres: false, logo: telegram },
-    { name: 'facebook', theres: false, logo: facebook },
-    { name: 'instagram', theres: false, logo: instagram },
-  ];
-
-  const [state, setState] = useState<EstablishmentForm>({
-    name: '',
-    description: '',
-    schedule: [
-      { day: 'Понедельник', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
-      { day: 'Вторник', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
-      { day: 'Среда', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
-      { day: 'Четверг', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
-      { day: 'Пятница', open: true, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
-      { day: 'Суббота', open: false, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
-      { day: 'Воскресенье', open: false, start: dayjs('00:00', 'HH:mm'), finish: dayjs('00:00', 'HH:mm'), twentyFourHours: false },
-      { day: 'Перерыв', open: false, start: dayjs('12:30', 'HH:mm'), finish: dayjs('13:30', 'HH:mm'), twentyFourHours: false },
-    ],
-    address: '',
-    coordinates: [0, 0],
-    phoneNumber: [
-      {
-        id: Date.now(),
-        number: '',
-        internationalCode: '',
-        phoneError: false,
-        socialOpen: false,
-        socialMedia: defaultSocialMedia,
-      },
-    ],
-  });
-
+  const [state, setState] = useState<EstablishmentForm>(initialEstablishmentState);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
   console.log(state);
   console.log(searchResult);
 
   // Функция для получении списка улиц
   const searchStreet = useCallback(async (location: string, city: string, address: string) => {
-    const response = await axiosApi.get(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(`${location},${city},${address}`)}&format=json`
-    );
-    const filterData = response.data
-      .filter((elem: { addresstype: string }) => elem.addresstype === 'building')
-      .map((elem: { display_name: string, lat: string, lon: string }) => {
-        const parts = elem.display_name.split(',').map(part => part.trim()); // создает массив из строк, разделяя через запятую
-        const shortAddress = parts.slice(0, 3).join(', ');
-
-        return {
-          displayName: shortAddress,
-          lat: elem.lat,
-          lon: elem.lon,
-        }
-      });
-
+    const filterData = await searchStreetService(location, city, address);
     setSearchResult(filterData);
-  }, [locationSelect, setSearchResult]);
+  }, []);
 
   const debouncedSearchStreet = useRef(debounce(searchStreet, 300)).current;
 
@@ -110,14 +60,14 @@ const CreateEstablishment = () => {
         }
       }
 
-      searchResult.some((address) => (
-        address.displayName === state.address &&
+      const found = searchResult.find((address) => address.displayName === state.address);
+      if (found) {
         setState((prevState) => ({
           ...prevState,
-          address: address.displayName,
-          coordinates: [parseFloat(address.lat), parseFloat(address.lon)],
-        }))
-      ));
+          address: found.displayName,
+          coordinates: [parseFloat(found.lat), parseFloat(found.lon)],
+        }));
+      }
     };
 
     void fetchUrl();
@@ -127,8 +77,6 @@ const CreateEstablishment = () => {
     start: dayjs('00:00', 'HH:mm'),
     finish: dayjs('00:00', 'HH:mm'),
   });
-
-  const dispatch = useAppDispatch();
 
   const inputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -144,7 +92,7 @@ const CreateEstablishment = () => {
       setState((prevState) => ({
         ...prevState,
         schedule: prevState.schedule.map((item, i) =>
-          i === index ? { ...item, [name]: value } : item
+          i === index ? { ...item, [name]: value } : item,
         ),
       }));
     }
@@ -154,7 +102,7 @@ const CreateEstablishment = () => {
     setState((prevState) => ({
       ...prevState,
       schedule: prevState.schedule.map((item, i) =>
-        i === index ? { ...item, open: !item.open } : item // находит по индексу и изменяет булевое значение
+        i === index ? { ...item, open: !item.open } : item,
       ),
     }));
   };
@@ -169,7 +117,7 @@ const CreateEstablishment = () => {
       setState((prevState) => ({
         ...prevState,
         schedule: prevState.schedule.map((item) =>
-          item.open ? { ...item, [name]: value } : item
+          item.open ? { ...item, [name]: value } : item,
         ),
       }));
     }
@@ -198,7 +146,7 @@ const CreateEstablishment = () => {
             ...item,
             number: value,
             internationalCode: countryCode,
-            phoneError: isValid,
+            isValidPhone: isValid,
           }
           : item,
       ),
@@ -211,7 +159,7 @@ const CreateEstablishment = () => {
       id: Date.now(), // Устанавливаем уникальный id
       number: '',
       internationalCode: '',
-      phoneError: false,
+      isValidPhone: false,
       socialOpen: false,
       socialMedia: defaultSocialMedia,
     };
@@ -264,8 +212,13 @@ const CreateEstablishment = () => {
   const formSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();
 
-    await dispatch(createEstablishment(state));
-    navigate('/');
+    try {
+      await dispatch(createEstablishment(state)).unwrap();
+      navigate('/');
+    } catch (e) {
+      console.error('Ошибка при создании заведения:', e);
+    }
+
   };
 
   return (
@@ -303,7 +256,8 @@ const CreateEstablishment = () => {
           />
 
           <AddressSearch
-            state={state}
+            address={state.address}
+            coordinates={state.coordinates}
             location={locationSelect}
             inputChangeHandler={inputChangeHandler}
             isLocationUpdateLoading={isLocationUpdateLoading}
@@ -312,7 +266,7 @@ const CreateEstablishment = () => {
           />
 
           <PhoneBlock
-            state={state}
+            phoneNumber={state.phoneNumber}
             addNewPhone={addNewPhone}
             isLocationLoading={isLocationLoading}
             location={locationSelect}
@@ -327,7 +281,7 @@ const CreateEstablishment = () => {
           <ScheduleBlock
             everyoneTime={everyoneTime}
             handleSetTimeEveryone={handleSetTimeEveryone}
-            state={state}
+            schedule={state.schedule}
             handleScheduleChange={handleScheduleChange}
             handleTimeChange={handleTimeChange}
             handleTwentyHoursChange={handleTwentyHoursChange}
@@ -337,24 +291,11 @@ const CreateEstablishment = () => {
         <div className="establishment-btn">
           <Button
             type="submit"
-            disabled={
-              state.name.trim() === '' ||
-              state.address.trim() === '' ||
-              state.schedule.every(item => !item.open) ||
-              state.schedule.filter(item => item.open).some(
-                item =>
-                  item.twentyFourHours ? false :
-                    !dayjs(item.start, 'HH:mm', true).isValid() ||
-                    !dayjs(item.finish, 'HH:mm', true).isValid()
-              ) ||
-              state.coordinates.every(elem => elem === 0) ||
-              state.phoneNumber.some(elem => !elem.phoneError) ||
-              isEstablishmentCreateLoading ||
-              !searchResult.some(item => item.displayName.toLowerCase() === state.address.toLowerCase())
-            }
+            disabled={isEstablishmentFormInvalid(state, searchResult, isEstablishmentCreateLoading)}
           >
-            Отправить {isEstablishmentCreateLoading ? (<CircularProgress sx={{ ml: 2 }} />) : ''}
+            Отправить {isEstablishmentCreateLoading && <CircularProgress sx={{ ml: 2 }} />}
           </Button>
+
         </div>
       </Box>
     </div>
