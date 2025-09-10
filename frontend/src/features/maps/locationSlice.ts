@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store.ts';
-import {changeMyLocationThunk, getMyLocationThunk} from './locationThunk.ts';
+import { changeMyLocationThunk, getMyLocationThunk } from './locationThunk.ts';
 import { LocationTypes } from '../../types/types.Location.ts';
 
 interface Location {

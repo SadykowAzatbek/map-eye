@@ -34,8 +34,6 @@ const CreateEstablishment = () => {
 
   const [state, setState] = useState<EstablishmentForm>(initialEstablishmentState);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
-  console.log(state);
-  console.log(searchResult);
 
   // Функция для получении списка улиц
   const searchStreet = useCallback(async (location: string, city: string, address: string) => {

@@ -1,12 +1,5 @@
 import dayjs from 'dayjs';
 
-// export interface EstablishmentBase {
-//   name: string;
-//   description: string;
-//   address: string;
-//   coordinates: [number, number];
-// }
-
 export interface WorkSchedule {
   day: string;
   open: boolean;

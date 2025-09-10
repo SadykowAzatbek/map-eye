@@ -4,3 +4,18 @@ export interface LocationTypes {
   city: string;
   altSpellings: string[];
 }
+
+export interface CountryTypes {
+  altSpellings: string[];
+  name: {
+    common: string;
+  };
+  translations: {
+    rus: {
+      common: string;
+    }
+  }
+  flags: {
+    svg: string;
+  }
+}
