@@ -89,7 +89,8 @@ export class EstablishmentController {
       const reviews = reviewsArray[index]; // отзывы для конкретного заведения
       if (reviews.length > 0) {
         const sum = reviews.reduce((acc, review) => acc + review.grade, 0);
-        establishment.rating = sum / reviews.length / 10;
+        const result = sum / reviews.length;
+        establishment.rating = parseFloat(result.toFixed(1));
       } else {
         establishment.rating = 0;
       }

@@ -13,7 +13,7 @@ import { isSaveDisabled } from '../config/isSaveLocationDiabled.ts';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks.ts';
 import { selectUser } from '../../../../features/users/usersSlice.ts';
 import { initialLocationState } from '../config/initialLocationState.ts';
-import { getCitiesService, getCountryService } from '../../../services/locationService.ts';
+import { getCitiesService, getCountryService } from '../../../../services/locationService.ts';
 import {
   changeMyLocationThunk,
   createMyLocationThunk,

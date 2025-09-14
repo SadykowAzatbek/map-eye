@@ -1,5 +1,5 @@
-import axiosApi from '../../utils/axiosApi.ts';
-import { CountryTypes } from '../../types/types.Location.ts';
+import axiosApi from '../utils/axiosApi.ts';
+import { CountryTypes } from '../types/types.Location.ts';
 
 export const getCountryService = async (query: string) => {
   const response = await axiosApi.get<CountryTypes[]>(`https://restcountries.com/v3.1/name/${query}`);
