@@ -14,7 +14,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
   const myLocation = useAppSelector(selectLocation);
 
   const phoneInfo = establishments.phoneNumber[0];
-  const social = phoneInfo.socialMedia?.[0];
+  const social = phoneInfo.socialMedia;
 
   const rating = establishments.rating;
   const fullStars = Math.floor(rating); // целая часть
@@ -32,7 +32,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
   const voidStars = 5 - stars - (hasHalfStar ? 1 : 0);
 
   return (
-    <Box sx={{ border: '1px solid #000', p: 3, m: 2 }}>
+    <Box sx={{ border: '1px solid #000', p: 3, m: 2, borderRadius: '1rem', cursor: 'pointer' }}>
       <Typography component="h6" variant="h5">
         {establishments.name}
       </Typography>
@@ -41,20 +41,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
         {establishments.address.replace(`${myLocation?.location}`, '')}
       </Typography>
 
-      <Typography component="div">
-        {`${establishments.description.split(' ', 14).join(' ')}${
-          establishments.description.length > 100 ? '...' : ''
-        }`}
-      </Typography>
-
-      <Typography component="div">
-        <div className="social-media-style" style={{ border: '1px solid #000' }}>
-          +{phoneInfo?.number}
-          {social && <img src={social.logo} alt={social.name} />}
-        </div>
-      </Typography>
-
-      <Typography component="div" display="flex">
+      <Typography component="div" display="flex" mb={2} borderBottom="1px solid #000" borderColor="gray">
         {Array.from({ length: stars }, (_, i) => (
           <StarIcon key={`star-${i}`} />
         ))}
@@ -66,8 +53,29 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
         ))}
 
         <div style={{ marginLeft: 5, marginTop: 2 }}>
-          {rating > 0 && rating.toFixed(1)}
+          <b>{rating > 0 && rating.toFixed(1)}</b>
+          <span style={{ fontSize: 14 }}>{rating > 0 && ' Оценок'}</span>
         </div>
+      </Typography>
+
+      <Typography component="div">
+        {`${establishments.description.split(' ', 14).join(' ')}${
+          establishments.description.length > 100 ? '...' : ''
+        }`}
+      </Typography>
+
+      <Typography component="div">
+        <div className="social-media-style" style={{ borderBottom: '1px solid grey' }}>
+          Тел: +{phoneInfo?.number}
+          {social && social.map((item) => (
+            item.theres && (<img src={item.logo} alt={item.name} key={item.name} style={{ marginLeft: '4px' }} />)
+          ))}
+        </div>
+      </Typography>
+
+      <Typography component="div">
+        Рабочий график <br />
+        отзывы
       </Typography>
     </Box>
   );
