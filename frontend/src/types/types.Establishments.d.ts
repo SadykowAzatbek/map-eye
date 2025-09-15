@@ -44,6 +44,7 @@ export interface EstablishmentApi {
   address: string;
   coordinates: [number, number];
   rating: number;
+  reviews: number;
   approved: boolean;
   schedule: WorkSchedule[];
   phoneNumber: PhoneTypes[];

@@ -9,6 +9,7 @@ export class CreateEstablishmentDto {
     twentyFourHours: boolean;
   }[];
   rating: number;
+  reviews: number;
   approved: boolean;
   address: string;
   coordinates: [number, number];

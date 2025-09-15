@@ -54,6 +54,7 @@ export class EstablishmentController {
         description: establishmentDto.description,
         schedule: establishmentDto.schedule,
         rating: establishmentDto.rating,
+        reviews: establishmentDto.reviews,
         approved: establishmentDto.approved,
         address: establishmentDto.address,
         coordinates: establishmentDto.coordinates,
@@ -89,13 +90,16 @@ export class EstablishmentController {
     );
     establishments.forEach((establishment, index) => {
       const reviews = reviewsArray[index]; // отзывы для конкретного заведения
-      if (reviews.length > 0) {
+      const reviewsLength = reviews.length;
+      if (reviewsLength > 0) {
         const sum = reviews.reduce((acc, review) => acc + review.grade, 0);
-        const result = sum / reviews.length;
+        const result = sum / reviewsLength;
         establishment.rating = parseFloat(result.toFixed(1));
+        establishment.reviews = reviewsLength;
       } else {
         establishment.rating = 0;
       }
+      establishment.save();
     });
 
     return establishments;

@@ -88,6 +88,9 @@ export class Establishment {
   @Prop({ required: true, default: 0 })
   rating: number;
 
+  @Prop({ required: true, default: 0 })
+  reviews: number;
+
   @Prop({ required: true, default: false })
   approved: boolean;
 

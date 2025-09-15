@@ -54,7 +54,6 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
 
         <div style={{ marginLeft: 5, marginTop: 2 }}>
           <b>{rating > 0 && rating.toFixed(1)}</b>
-          <span style={{ fontSize: 14 }}>{rating > 0 && ' Оценок'}</span>
         </div>
       </Typography>
 
@@ -74,8 +73,13 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
       </Typography>
 
       <Typography component="div">
-        Рабочий график <br />
-        отзывы
+        Рабочий график
+      </Typography>
+
+      <Typography component="div">
+        <span style={{ background: '#7a7979', color: '#ffffff', padding: '2px 5px', borderRadius: '4px' }}>
+          {establishments.reviews ? `Отзывы и оценки: ${establishments.reviews}` : 'Отзывов пока нет'}
+        </span>
       </Typography>
 
       <Typography component="div">
