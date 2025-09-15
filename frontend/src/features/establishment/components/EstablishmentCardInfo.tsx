@@ -66,7 +66,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
 
       <Typography component="div">
         <div className="social-media-style" style={{ borderBottom: '1px solid grey' }}>
-          Тел: +{phoneInfo?.number}
+          Тел: +{phoneInfo.number}
           {social && social.map((item) => (
             item.theres && (<img src={item.logo} alt={item.name} key={item.name} style={{ marginLeft: '4px' }} />)
           ))}
@@ -76,6 +76,15 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
       <Typography component="div">
         Рабочий график <br />
         отзывы
+      </Typography>
+
+      <Typography component="div">
+        <b>
+          Одобрен:
+          {establishments.approved ?
+            <span style={{ color: '#008000' }}> одобрена</span> :
+            <span style={{ color: '#FF0000' }}> нет</span>}
+        </b>
       </Typography>
     </Box>
   );

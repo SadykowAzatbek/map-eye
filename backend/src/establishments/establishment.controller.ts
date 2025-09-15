@@ -74,7 +74,9 @@ export class EstablishmentController {
   @Get('my')
   async getMyEstablishments(@Req() req: UserRequest) {
     const userId = req.user?._id;
-    const establishments = await this.establishmentModel.find({ userId });
+    const establishments = await this.establishmentModel
+      .find({ userId })
+      .exec();
 
     if (!establishments) {
       throw new UnprocessableEntityException('Establishments not found');

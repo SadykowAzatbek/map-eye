@@ -46,7 +46,7 @@ export class ReviewController {
       await this.establishmentModel.findById(objectId);
     // Если заведение не одобрено, то вывод ошибки
     if (!approvedEstablishment.approved) {
-      throw new BadRequestException();
+      throw new BadRequestException('Заведение не одобрена для показа');
     }
     const reviews = await this.reviewModel
       .find({ establishmentId: objectId })
@@ -65,6 +65,15 @@ export class ReviewController {
     @Req() req: UserRequest,
   ) {
     const objectId = new mongoose.Types.ObjectId(id);
+
+    const approvedEstablishment =
+      await this.establishmentModel.findById(objectId);
+
+    if (!approvedEstablishment.approved) {
+      throw new BadRequestException(
+        'Заведение не одобрена для отправки отзыва',
+      );
+    }
 
     // Проверяем, существует ли уже отзыв от данного пользователя на данное заведение
     const existingReview = await this.reviewModel.findOne({
