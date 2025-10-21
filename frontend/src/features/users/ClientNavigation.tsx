@@ -29,9 +29,9 @@ const ClientNavigation = () => {
       <Typography component="div" variant="h3">
         <b>Мое заведение</b>
       </Typography>
-      <Grid container display="flex" flexWrap="wrap">
+      <Grid container alignItems="stretch" spacing={2}>
         {myEstablishments.map((establishment) => (
-          <Grid item xs={4} key={establishment._id}>
+          <Grid item xs={6} key={establishment._id}>
             {!myEstablishmentsLoading ?
               <EstablishmentCardInfo establishments={establishment} />
               : <CircularProgress />}

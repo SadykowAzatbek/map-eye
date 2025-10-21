@@ -32,7 +32,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
   const voidStars = 5 - stars - (hasHalfStar ? 1 : 0);
 
   return (
-    <Box sx={{ border: '1px solid #000', p: 3, m: 2, borderRadius: '1rem', cursor: 'pointer' }}>
+    <Box sx={{ border: '1px solid #000', p: 3, m: 2, borderRadius: '1rem', cursor: 'pointer', height: '100%' }}>
       <Typography component="h6" variant="h5">
         {establishments.name}
       </Typography>
@@ -58,7 +58,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
       </Typography>
 
       <Typography component="div">
-        {`${establishments.description.split(' ', 14).join(' ')}${
+        {`${establishments.description.split(' ', 20).join(' ')}${
           establishments.description.length > 100 ? '...' : ''
         }`}
       </Typography>

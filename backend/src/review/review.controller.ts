@@ -75,6 +75,10 @@ export class ReviewController {
       );
     }
 
+    if (req.user._id.toString() === approvedEstablishment.userId.toString()) {
+      throw new BadRequestException('нельзя оценивать собственное заведение');
+    }
+
     // Проверяем, существует ли уже отзыв от данного пользователя на данное заведение
     const existingReview = await this.reviewModel.findOne({
       userId: req.user._id,
