@@ -16,63 +16,67 @@ export class Establishment {
   description: string;
 
   @Prop({
+    type: Object,
+    required: true,
+    default: { break: false, start: '11:00', finish: '12:00' },
+  })
+  break: {
+    break: boolean;
+    day: string;
+    finish: string;
+  };
+
+  @Prop({
     type: Array,
     required: true,
     default: [
       {
-        day: 'Понедельник',
+        day: 'Пн',
         open: true,
-        start: '2024-09-09T18:00:00.000Z',
-        finish: '2024-09-09T18:00:00.000Z',
+        start: '9:00',
+        finish: '18:00',
         twentyFourHours: false,
       },
       {
-        day: 'Вторник',
+        day: 'Вт',
         open: true,
-        start: '2024-09-09T18:00:00.000Z',
-        finish: '2024-09-09T18:00:00.000Z',
+        start: '9:00',
+        finish: '18:00',
         twentyFourHours: false,
       },
       {
-        day: 'Среда',
+        day: 'Ср',
         open: true,
-        start: '2024-09-09T18:00:00.000Z',
-        finish: '2024-09-09T18:00:00.000Z',
+        start: '9:00',
+        finish: '18:00',
         twentyFourHours: false,
       },
       {
-        day: 'Четверг',
+        day: 'Чт',
         open: true,
-        start: '2024-09-09T18:00:00.000Z',
-        finish: '2024-09-09T18:00:00.000Z',
+        start: '9:00',
+        finish: '18:00',
         twentyFourHours: false,
       },
       {
-        day: 'Пятница',
+        day: 'Пт',
         open: true,
-        start: '2024-09-09T18:00:00.000Z',
-        finish: '2024-09-09T18:00:00.000Z',
+        start: '9:00',
+        finish: '18:00',
         twentyFourHours: false,
       },
       {
-        day: 'Суббота',
+        day: 'Сб',
         open: false,
-        start: '2024-09-09T18:00:00.000Z',
-        finish: '2024-09-09T18:00:00.000Z',
+        start: '9:00',
+        finish: '18:00',
         twentyFourHours: false,
       },
       {
-        day: 'Воскресенье',
+        day: 'Вс',
         open: false,
-        start: '2024-09-09T18:00:00.000Z',
-        finish: '2024-09-09T18:00:00.000Z',
-        twentyFourHours: false,
-      },
-      {
-        day: 'Перерыв',
-        open: false,
-        start: '2024-09-09T18:00:00.000Z',
-        finish: '2024-09-09T18:00:00.000Z',
+        start: '9:00',
+        finish: '18:00',
         twentyFourHours: false,
       },
     ],

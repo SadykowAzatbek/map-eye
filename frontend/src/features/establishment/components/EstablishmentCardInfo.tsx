@@ -5,6 +5,8 @@ import { EstablishmentApi } from '../../../types/types.Establishments';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import dayjs from 'dayjs';
 
 interface Props {
   establishments: EstablishmentApi;
@@ -72,8 +74,8 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
         </div>
       </Typography>
 
-      <Typography component="div">
-        Рабочий график
+      <Typography component="div" display="flex" mt={1} mb={1} pb={1} borderBottom="1px solid grey" alignItems="center" gap={1}>
+        <WatchLaterIcon />
       </Typography>
 
       <Typography component="div">

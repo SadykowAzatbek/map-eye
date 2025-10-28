@@ -35,6 +35,8 @@ const CreateEstablishment = () => {
   const [state, setState] = useState<EstablishmentForm>(initialEstablishmentState);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
 
+  console.log(state);
+
   // Функция для получении списка улиц
   const searchStreet = useCallback(async (location: string, city: string, address: string) => {
     const filterData = await searchStreetService(location, city, address);
@@ -85,23 +87,31 @@ const CreateEstablishment = () => {
     }));
   };
 
-  const handleTimeChange = (index: number, name: 'start' | 'finish', value: Dayjs | null) => {
+  const handleTimeChange = (index: number | null, name: 'start' | 'finish', value: Dayjs | null) => {
     if (value) {
       setState((prevState) => ({
         ...prevState,
         schedule: prevState.schedule.map((item, i) =>
-          i === index ? { ...item, [name]: value } : item,
+         i === index ? { ...item, [name]: value } : item,
         ),
+        breakTime: {
+          ...prevState.breakTime,
+          [name]: value,
+        }
       }));
     }
   };
 
-  const handleScheduleChange = (index: number) => {
+  const handleScheduleChange = (index: number | null) => {
     setState((prevState) => ({
       ...prevState,
       schedule: prevState.schedule.map((item, i) =>
         i === index ? { ...item, open: !item.open } : item,
       ),
+      breakTime: {
+        ...prevState.breakTime,
+        break: !prevState.breakTime.break,
+      }
     }));
   };
 
@@ -212,7 +222,7 @@ const CreateEstablishment = () => {
 
     try {
       await dispatch(createEstablishment(state)).unwrap();
-      navigate('/');
+      navigate('/profile');
     } catch (e) {
       console.error('Ошибка при создании заведения:', e);
     }
@@ -279,6 +289,7 @@ const CreateEstablishment = () => {
           <ScheduleBlock
             everyoneTime={everyoneTime}
             handleSetTimeEveryone={handleSetTimeEveryone}
+            breakData={state.breakTime}
             schedule={state.schedule}
             handleScheduleChange={handleScheduleChange}
             handleTimeChange={handleTimeChange}

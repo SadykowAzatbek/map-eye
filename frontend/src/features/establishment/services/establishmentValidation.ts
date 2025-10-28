@@ -22,8 +22,8 @@ export const isEstablishmentFormInvalid = (
     state.coordinates.every((elem) => elem === 0) ||
     state.phoneNumber.some((elem) => !elem.isValidPhone) ||
     isLoading ||
-    !searchResult.some(
-      (item) => item.displayName.toLowerCase() === state.address.toLowerCase()
+    searchResult.some(
+      (item) => item.displayName.toLowerCase() !== state.address.toLowerCase()
     )
   );
 };

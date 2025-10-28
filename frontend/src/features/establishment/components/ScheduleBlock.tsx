@@ -4,20 +4,22 @@ import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import LockIcon from '@mui/icons-material/Lock';
 import { Dayjs } from 'dayjs';
-import { WorkSchedule } from '../../../types/types.Establishments';
+import { BreakData, WorkSchedule } from '../../../types/types.Establishments';
 
 interface Props {
   everyoneTime: { start: Dayjs, finish: Dayjs };
   handleSetTimeEveryone: (name: 'start' | 'finish', value: Dayjs | null) => void;
+  breakData: BreakData;
   schedule: WorkSchedule[];
-  handleScheduleChange: (index: number) => void;
-  handleTimeChange: (index: number, name: 'start' | 'finish', value: Dayjs | null) => void;
+  handleScheduleChange: (index: number | null) => void;
+  handleTimeChange: (index: number | null, name: 'start' | 'finish', value: Dayjs | null) => void;
   handleTwentyHoursChange: (index: number) => void;
 }
 
 const ScheduleBlock: React.FC<Props> = ({
   everyoneTime,
   handleSetTimeEveryone,
+  breakData,
   schedule,
   handleScheduleChange,
   handleTimeChange,
@@ -45,57 +47,81 @@ const ScheduleBlock: React.FC<Props> = ({
 
       <Typography component="div" sx={{ mt: 3 }}><b>Рабочие дни:</b></Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        {schedule.map((elem, index) => (
-          <div key={elem.day} className="form-time">
-            <FormControlLabel
-              key={elem.day}
-              control={
-                <Checkbox
-                  checked={elem.open}
-                  onChange={() => handleScheduleChange(index)}
-                />
-              }
-              label={elem.day + ':'}
-              sx={{ borderBottom: '1px solid #ccc', width: '50%' }}
-            />
-            {elem.open ? (
-              <div style={{ display: 'inline-block' }}>
-                <TimePicker
-                  className="time-styles"
-                  label="Начало"
-                  value={elem.start}
-                  onChange={(value) => handleTimeChange(index, 'start', value)}
-                  ampm={false}
-                  disabled={elem.twentyFourHours}
-                />
-                <TimePicker
-                  className="time-styles"
-                  label="Конец"
-                  value={elem.finish}
-                  onChange={(value) => handleTimeChange(index, 'finish', value)}
-                  ampm={false}
-                  disabled={elem.twentyFourHours}
-                />
-                {elem.day !== 'Перерыв' ?
+        <div>
+          {schedule.map((elem, index) => (
+            <div key={elem.day} className="form-time">
+              <FormControlLabel
+                key={elem.day}
+                control={
+                  <Checkbox
+                    checked={elem.open}
+                    onChange={() => handleScheduleChange(index)}
+                  />
+                }
+                label={elem.day + ':'}
+                sx={{ borderBottom: '1px solid #ccc', width: '50%' }}
+              />
+              {elem.open ? (
+                <div style={{ display: 'inline-block' }}>
+                  <TimePicker
+                    className="time-styles"
+                    label="Начало"
+                    value={elem.start}
+                    onChange={(value) => handleTimeChange(index, 'start', value)}
+                    ampm={false}
+                    disabled={elem.twentyFourHours}
+                  />
+                  <TimePicker
+                    className="time-styles"
+                    label="Конец"
+                    value={elem.finish}
+                    onChange={(value) => handleTimeChange(index, 'finish', value)}
+                    ampm={false}
+                    disabled={elem.twentyFourHours}
+                  />
+
                   <div className="twenty-hours">
                     Круглосуточно:
                     <Checkbox
                       checked={elem.twentyFourHours}
                       onChange={() => handleTwentyHoursChange(index)}
                     />
-                  </div> :
-                  ''
-                }
-              </div>
-            ) : elem.day === 'Перерыв' ? (
-              'Без перерыва'
-            ) : (
-              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                Закрыто <LockIcon />
-              </div>
-            )}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  Закрыто <LockIcon />
+                </div>
+              )}
+            </div>
+          ))}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={breakData.break}
+                onChange={() => handleScheduleChange(null)}
+              />
+            }
+            label="Перерыв"
+            sx={{ borderBottom: '1px solid #ccc', width: '50%' }}
+          />
+          <div style={{ display: 'inline-block' }}>
+            <TimePicker
+              className="time-styles"
+              label="Начало"
+              value={breakData.start}
+              onChange={(value) => handleTimeChange(null, 'start', value)}
+              ampm={false}
+            />
+            <TimePicker
+              className="time-styles"
+              label="Конец"
+              value={breakData.finish}
+              onChange={(value) => handleTimeChange(null, 'finish', value)}
+              ampm={false}
+            />
           </div>
-        ))}
+        </div>
       </LocalizationProvider>
     </>
   );

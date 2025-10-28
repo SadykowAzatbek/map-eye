@@ -14,6 +14,11 @@ interface SocialMediaTypes {
   logo: string;
 }
 
+export interface BreakData {
+  break: boolean;
+  start: dayjs.Dayjs;
+  finish: dayjs.Dayjs;
+}
 
 export interface PhoneTypes {
   number: string;
@@ -32,6 +37,7 @@ export interface EstablishmentForm {
   description: string;
   address: string;
   coordinates: [number, number];
+  breakTime: BreakData;
   schedule: WorkSchedule[];
   phoneNumber: PhoneMethod[];
 }
@@ -46,6 +52,7 @@ export interface EstablishmentApi {
   rating: number;
   reviews: number;
   approved: boolean;
+  break: BreakData;
   schedule: WorkSchedule[];
   phoneNumber: PhoneTypes[];
 }

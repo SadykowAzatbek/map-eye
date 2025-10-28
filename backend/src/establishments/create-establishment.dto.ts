@@ -1,6 +1,11 @@
 export class CreateEstablishmentDto {
   name: string;
   description: string;
+  break: {
+    break: boolean;
+    start: string;
+    finish: string;
+  };
   schedule: {
     day: string;
     open: boolean;
