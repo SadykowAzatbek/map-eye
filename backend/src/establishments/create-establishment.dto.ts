@@ -1,7 +1,7 @@
 export class CreateEstablishmentDto {
   name: string;
   description: string;
-  break: {
+  breakTime: {
     break: boolean;
     start: string;
     finish: string;

@@ -3,6 +3,7 @@ import { Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import LockIcon from '@mui/icons-material/Lock';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { Dayjs } from 'dayjs';
 import { BreakData, WorkSchedule } from '../../../types/types.Establishments';
 
@@ -95,31 +96,42 @@ const ScheduleBlock: React.FC<Props> = ({
               )}
             </div>
           ))}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={breakData.break}
-                onChange={() => handleScheduleChange(null)}
-              />
+          <div className="form-time">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={breakData.break}
+                  onChange={() => handleScheduleChange(null)}
+                />
+              }
+              label="Перерыв"
+              sx={{ borderBottom: '1px solid #ccc', width: '50%' }}
+            />
+            {breakData.break ?
+              (
+                <div style={{ display: 'inline-block' }}>
+                  <TimePicker
+                    className="time-styles"
+                    label="Начало"
+                    value={breakData.start}
+                    onChange={(value) => handleTimeChange(null, 'start', value)}
+                    ampm={false}
+                  />
+                  <TimePicker
+                    className="time-styles"
+                    label="Конец"
+                    value={breakData.finish}
+                    onChange={(value) => handleTimeChange(null, 'finish', value)}
+                    ampm={false}
+                  />
+                </div>
+              ) : (
+                <Typography component="div" display="flex" alignItems="center" gap={1}>
+                  <span>Без перерыва</span>
+                  <CancelIcon />
+                </Typography>
+              )
             }
-            label="Перерыв"
-            sx={{ borderBottom: '1px solid #ccc', width: '50%' }}
-          />
-          <div style={{ display: 'inline-block' }}>
-            <TimePicker
-              className="time-styles"
-              label="Начало"
-              value={breakData.start}
-              onChange={(value) => handleTimeChange(null, 'start', value)}
-              ampm={false}
-            />
-            <TimePicker
-              className="time-styles"
-              label="Конец"
-              value={breakData.finish}
-              onChange={(value) => handleTimeChange(null, 'finish', value)}
-              ampm={false}
-            />
           </div>
         </div>
       </LocalizationProvider>

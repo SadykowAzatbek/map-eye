@@ -52,7 +52,7 @@ export class EstablishmentController {
         userId: req.user?._id,
         name: establishmentDto.name,
         description: establishmentDto.description,
-        break: establishmentDto.break,
+        breakTime: establishmentDto.breakTime,
         schedule: establishmentDto.schedule,
         rating: establishmentDto.rating,
         reviews: establishmentDto.reviews,

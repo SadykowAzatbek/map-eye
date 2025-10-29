@@ -20,7 +20,7 @@ export class Establishment {
     required: true,
     default: { break: false, start: '11:00', finish: '12:00' },
   })
-  break: {
+  breakTime: {
     break: boolean;
     day: string;
     finish: string;
