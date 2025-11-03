@@ -1,7 +1,7 @@
 import { useAppSelector } from '../../../app/hooks.ts';
 import { Box, Typography } from '@mui/material';
 import { selectLocation } from '../../maps/locationSlice.ts';
-import { EstablishmentApi } from '../../../types/types.Establishments';
+import { EstablishmentApi, WorkSchedule } from '../../../types/types.Establishments';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -32,6 +32,29 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
   }
 
   const voidStars = 5 - stars - (hasHalfStar ? 1 : 0);
+
+  const schedule = establishments.schedule;
+
+  const isStandardSchedule = (schedule: WorkSchedule[]) => {
+    const weekdays = schedule.slice(0, 5);
+    const weekend = schedule.slice(5, 7);
+
+    return weekdays.every(day => day.open) && weekend.every(day => !day.open);
+  };
+
+  const daily = establishments.schedule.every((day) => day.open); // ежедневно
+  const weekdays = isStandardSchedule(establishments.schedule); // будни
+
+  const openDays = schedule.filter((day) => day.open); // открытые дни
+
+  const hours24 = openDays.every((day) => day.twentyFourHours); // круглосуточно
+  const checkWorkTime = openDays.every(
+    (day) =>
+      day.start === openDays[0].start && day.finish === openDays[0].finish, // проверка на совпадаение времени
+  );
+
+  //Проверка рабочих дней в ряд, по возможности и выходные если шо
+  //Проверка на случайные рабочие дни с одинаковыми рабочими часами
 
   return (
     <Box sx={{ border: '1px solid #000', p: 3, m: 2, borderRadius: '1rem', cursor: 'pointer', height: '100%' }}>
@@ -74,8 +97,33 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
         </div>
       </Typography>
 
-      <Typography component="div" display="flex" mt={1} mb={1} pb={1} borderBottom="1px solid grey" alignItems="center" gap={1}>
+      <Typography component="div" display="flex" mt={1} mb={1} pb={1} borderBottom="1px solid grey" gap={1}>
         <WatchLaterIcon />
+        <div>
+          {
+            daily ?
+            `Ежедневно: ${hours24 ?
+              'круглосуточно' :
+              checkWorkTime &&
+              `с ${dayjs(schedule[0].start).format('HH:mm')} до ${dayjs(schedule[0].finish).format('HH:mm')}`}` :
+
+            weekdays ?
+            `По будням: ${hours24 ?
+              'круглосуточно' :
+              checkWorkTime &&
+              `с ${dayjs(schedule[0].start).format('HH:mm')} до ${dayjs(schedule[0].finish).format('HH:mm')}`}` :
+
+              schedule.map((day) => (
+                <div key={day.day}>
+                  {day.day}:
+                  {
+                    checkWorkTime &&
+                    ' с ' + dayjs(day.start).format('HH:mm') + ' до ' + dayjs(day.finish).format('HH:mm')
+                  }
+                </div>
+              ))
+          }
+        </div>
       </Typography>
 
       <Typography component="div">
