@@ -46,6 +46,11 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
   const weekdays = isStandardSchedule(establishments.schedule); // будни
 
   const openDays = schedule.filter((day) => day.open); // открытые дни
+  const closeDays = schedule.filter((day) => !day.open); // закрытые дни
+
+  const anotherDays = schedule.map((day) => day.open);
+
+  console.log(anotherDays);
 
   const hours24 = openDays.every((day) => day.twentyFourHours); // круглосуточно
   const checkWorkTime = openDays.every(
@@ -99,7 +104,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
 
       <Typography component="div" display="flex" mt={1} mb={1} pb={1} borderBottom="1px solid grey" gap={1}>
         <WatchLaterIcon />
-        <div>
+        <Typography component="div" display="flex">
           {
             daily ?
             `Ежедневно: ${hours24 ?
@@ -113,17 +118,33 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
               checkWorkTime &&
               `с ${dayjs(schedule[0].start).format('HH:mm')} до ${dayjs(schedule[0].finish).format('HH:mm')}`}` :
 
-              schedule.map((day) => (
-                <div key={day.day}>
-                  {day.day}:
-                  {
-                    checkWorkTime &&
-                    ' с ' + dayjs(day.start).format('HH:mm') + ' до ' + dayjs(day.finish).format('HH:mm')
-                  }
-                </div>
-              ))
+              anotherDays && (
+                <Typography component="div">
+                  <Typography component="div" display="flex">
+                    {openDays.map((day) => (
+                      <Typography component="div" mr="5px" key={day.day}>
+                        {day.day + '-'}
+                      </Typography>
+                    ))}
+                    {hours24 ?
+                      'круглосуточно' :
+                      checkWorkTime &&
+                      `с ${dayjs(schedule[0].start).format('HH:mm')} до ${dayjs(schedule[0].finish).format('HH:mm')}`
+                    }
+                  </Typography>
+                  <Typography component="div" display="flex">
+                    {closeDays.map((day) => (
+                      <Typography component="div" mr="5px" key={day.day}>
+                        {day.day + '-'}
+                      </Typography>
+                    ))}
+                    закрыто
+                  </Typography>
+                </Typography>
+              )
+
           }
-        </div>
+        </Typography>
       </Typography>
 
       <Typography component="div">
