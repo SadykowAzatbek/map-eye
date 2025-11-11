@@ -3,8 +3,8 @@ import dayjs from 'dayjs';
 export interface WorkSchedule {
   day: string;
   open: boolean;
-  start: dayjs.Dayjs;
-  finish: dayjs.Dayjs;
+  start: dayjs.Dayjs | null;
+  finish: dayjs.Dayjs | null;
   twentyFourHours: boolean;
 }
 

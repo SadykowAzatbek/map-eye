@@ -9,8 +9,8 @@ export class CreateEstablishmentDto {
   schedule: {
     day: string;
     open: boolean;
-    start: string;
-    finish: string;
+    start: string | null;
+    finish: string | null;
     twentyFourHours: boolean;
   }[];
   rating: number;

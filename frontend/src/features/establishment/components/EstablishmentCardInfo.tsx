@@ -35,31 +35,26 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
 
   const schedule = establishments.schedule;
 
-  const isStandardSchedule = (schedule: WorkSchedule[]) => {
-    const weekdays = schedule.slice(0, 5);
-    const weekend = schedule.slice(5, 7);
-
-    return weekdays.every(day => day.open) && weekend.every(day => !day.open);
+  const groupWorkDays = (schedule: WorkSchedule[]) => {
+    const openDays = schedule.filter((day) => day.open);
+    return openDays.reduce<Record<string, WorkSchedule[]>>((acc, day) => {
+      if (day.twentyFourHours) {
+        acc['24h'] = acc['24h'] ? [...acc['24h'], day] : [day];
+      } else {
+        const start = dayjs(day.start!).format('HH:mm');
+        const finish = dayjs(day.finish!).format('HH:mm');
+        const key = `${start}-${finish}`;
+        acc[key] = acc[key] ? [...acc[key], day] : [day];
+      }
+      return acc;
+    }, {});
   };
 
-  const daily = establishments.schedule.every((day) => day.open); // ежедневно
-  const weekdays = isStandardSchedule(establishments.schedule); // будни
+  const groupedDays = groupWorkDays(schedule);
 
-  const openDays = schedule.filter((day) => day.open); // открытые дни
-  const closeDays = schedule.filter((day) => !day.open); // закрытые дни
+  console.log('groupedDays', groupedDays);
 
-  const anotherDays = schedule.map((day) => day.open);
-
-  console.log(anotherDays);
-
-  const hours24 = openDays.every((day) => day.twentyFourHours); // круглосуточно
-  const checkWorkTime = openDays.every(
-    (day) =>
-      day.start === openDays[0].start && day.finish === openDays[0].finish, // проверка на совпадаение времени
-  );
-
-  //Проверка рабочих дней в ряд, по возможности и выходные если шо
-  //Проверка на случайные рабочие дни с одинаковыми рабочими часами
+  const closeDays = schedule.filter((day) => !day.open);
 
   return (
     <Box sx={{ border: '1px solid #000', p: 3, m: 2, borderRadius: '1rem', cursor: 'pointer', height: '100%' }}>
@@ -96,60 +91,47 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
       <Typography component="div">
         <div className="social-media-style" style={{ borderBottom: '1px solid grey' }}>
           Тел: +{phoneInfo.number}
-          {social && social.map((item) => (
-            item.theres && (<img src={item.logo} alt={item.name} key={item.name} style={{ marginLeft: '4px' }} />)
-          ))}
+          {social &&
+            social.map(
+              (item) =>
+                item.theres && (
+                  <img src={item.logo} alt={item.name} key={item.name} style={{ marginLeft: '4px' }} />
+                ),
+            )
+          }
         </div>
       </Typography>
 
       <Typography component="div" display="flex" mt={1} mb={1} pb={1} borderBottom="1px solid grey" gap={1}>
         <WatchLaterIcon />
-        <Typography component="div" display="flex">
-          {
-            daily ?
-            `Ежедневно: ${hours24 ?
-              'круглосуточно' :
-              checkWorkTime &&
-              `с ${dayjs(schedule[0].start).format('HH:mm')} до ${dayjs(schedule[0].finish).format('HH:mm')}`}` :
-
-            weekdays ?
-            `По будням: ${hours24 ?
-              'круглосуточно' :
-              checkWorkTime &&
-              `с ${dayjs(schedule[0].start).format('HH:mm')} до ${dayjs(schedule[0].finish).format('HH:mm')}`}` :
-
-              anotherDays && (
-                <Typography component="div">
-                  <Typography component="div" display="flex">
-                    {openDays.map((day) => (
-                      <Typography component="div" mr="5px" key={day.day}>
-                        {day.day + '-'}
-                      </Typography>
-                    ))}
-                    {hours24 ?
-                      'круглосуточно' :
-                      checkWorkTime &&
-                      `с ${dayjs(schedule[0].start).format('HH:mm')} до ${dayjs(schedule[0].finish).format('HH:mm')}`
-                    }
-                  </Typography>
-                  <Typography component="div" display="flex">
-                    {closeDays.map((day) => (
-                      <Typography component="div" mr="5px" key={day.day}>
-                        {day.day + '-'}
-                      </Typography>
-                    ))}
-                    закрыто
-                  </Typography>
+        <Box>
+          {Object.keys(groupedDays).length > 0 && (
+            Object.entries(groupedDays).map(([key, days]) => (
+              <Typography component="div" key={key} display="flex" gap={0.5}>
+                <Typography component="span" fontWeight="bold">
+                  {days.length === 7 ? 'Ежедневно' : days.map((d) => d.day).join(', ')}:
                 </Typography>
-              )
+                {key === '24h'
+                  ? 'круглосуточно'
+                  : `с ${key.replace('-', ' до ')}`}
+              </Typography>
+            ))
+          )}
 
-          }
-        </Typography>
+          {closeDays.length > 0 && (
+            <Typography component="div" mt={0.5}>
+              <b>{closeDays.map((d) => d.day).join(', ')}: </b>
+              закрыто
+            </Typography>
+          )}
+        </Box>
       </Typography>
 
       <Typography component="div">
         <span style={{ background: '#7a7979', color: '#ffffff', padding: '2px 5px', borderRadius: '4px' }}>
-          {establishments.reviews ? `Отзывы и оценки: ${establishments.reviews}` : 'Отзывов пока нет'}
+          {establishments.reviews
+            ? `Отзывы и оценки: ${establishments.reviews}`
+            : 'Отзывов пока нет'}
         </span>
       </Typography>
 

@@ -21,8 +21,6 @@ const ClientNavigation = () => {
     void getEstablishmentFetch();
   }, [dispatch]);
 
-  console.log(myEstablishments);
-
   return (
     <Box className="container" sx={{ marginTop: "100px", position: "relative" }}>
       {isOpen && (<ProfileEdit />)}

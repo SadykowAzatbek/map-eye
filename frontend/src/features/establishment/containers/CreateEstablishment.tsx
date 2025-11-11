@@ -35,6 +35,8 @@ const CreateEstablishment = () => {
   const [state, setState] = useState<EstablishmentForm>(initialEstablishmentState);
   const [searchResult, setSearchResult] = useState<searchTable[]>([]);
 
+  console.log(state);
+
   // Функция для получении списка улиц
   const searchStreet = useCallback(async (location: string, city: string, address: string) => {
     const filterData = await searchStreetService(location, city, address);
@@ -123,7 +125,7 @@ const CreateEstablishment = () => {
       setState((prevState) => ({
         ...prevState,
         schedule: prevState.schedule.map((item) =>
-          item.open ? { ...item, [name]: value } : item,
+          item.open && !item.twentyFourHours ? { ...item, [name]: value } : item,
         ),
       }));
     }
@@ -209,11 +211,21 @@ const CreateEstablishment = () => {
   const handleTwentyHoursChange = (index: number) => {
     setState((prevState) => ({
       ...prevState,
-      schedule: prevState.schedule.map((item, i) =>
-        i === index ? { ...item, twentyFourHours: !item.twentyFourHours } : item
-      ),
+      schedule: prevState.schedule.map((item, i) => {
+        if (i !== index) return item;
+
+        const newTwentyFourHours = !item.twentyFourHours;
+
+        return {
+          ...item,
+          twentyFourHours: newTwentyFourHours,
+          start: newTwentyFourHours ? null : item.start,
+          finish: newTwentyFourHours ? null : item.finish,
+        };
+      }),
     }));
   };
+
 
   const formSubmitHandler = async (event: FormEvent) => {
     event.preventDefault();

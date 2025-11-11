@@ -84,8 +84,8 @@ export class Establishment {
   schedule: {
     day: string;
     open: boolean;
-    start: string;
-    finish: string;
+    start: string | null;
+    finish: string | null;
     twentyFourHours: boolean;
   }[];
 
