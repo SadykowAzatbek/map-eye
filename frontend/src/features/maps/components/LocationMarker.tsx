@@ -1,8 +1,8 @@
 import { Marker, Popup, useMapEvents } from 'react-leaflet';
 import { useState } from 'react';
-import {Icon, LatLng} from 'leaflet';
+import { Icon, LatLng } from 'leaflet';
 import { Button } from '@mui/material';
-import locationImg from '../../../../public/location.png';
+import LocationPinIcon from '@mui/icons-material/LocationOn';
 
 const LocationMarker = () => {
   const [position, setPosition] = useState<LatLng | null>(null);
@@ -31,7 +31,7 @@ const LocationMarker = () => {
   };
 
   const customIcon = new Icon({
-    iconUrl: locationImg,
+    iconUrl: LocationPinIcon,
     iconSize: [40, 35],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -54,15 +54,7 @@ const LocationMarker = () => {
           background: '#fff',
         }}
       >
-        <img
-          src={locationImg}
-          alt="Dinamic img"
-          title="Мое местоположение"
-          style={{
-            width: '33px',
-            height: '30px',
-          }}
-        />
+       <LocationPinIcon />
       </Button>
       {position && (
         <Marker position={position} icon={customIcon}>

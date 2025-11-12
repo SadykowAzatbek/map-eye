@@ -52,7 +52,7 @@ export interface EstablishmentApi {
   rating: number;
   reviews: number;
   approved: boolean;
-  break: BreakData;
+  breakTime: BreakData;
   schedule: WorkSchedule[];
   phoneNumber: PhoneTypes[];
 }

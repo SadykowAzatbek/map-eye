@@ -7,5 +7,5 @@ type openProfileTypes = {
 
 export const useOpenEditProfile = create<openProfileTypes>((set) => ({
   isOpen: false,
-  toggleOpen: () => set((state) => ({isOpen: !state.isOpen})), // С false в true и наоборот
+  toggleOpen: () => set((state) => ({ isOpen: !state.isOpen })), // С false в true и наоборот
 }));

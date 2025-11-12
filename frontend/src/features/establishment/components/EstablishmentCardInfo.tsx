@@ -6,6 +6,7 @@ import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import LunchDiningIcon from '@mui/icons-material/LunchDining';
 import dayjs from 'dayjs';
 
 interface Props {
@@ -130,6 +131,18 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
           )}
         </Box>
       </Typography>
+
+      {establishments.breakTime.break
+        ? (
+          <Typography component="div" display="flex" mb={2} borderBottom="1px solid #000" borderColor="gray" gap={1}>
+            <LunchDiningIcon />
+            <b>
+              Перерыв: с {dayjs(establishments.breakTime.start).format('HH:mm')} по {dayjs(establishments.breakTime.finish).format('HH:mm')}
+            </b>
+          </Typography>
+        )
+        : ''
+      }
 
       <Typography component="div">
         <span style={{ background: '#7a7979', color: '#ffffff', padding: '2px 5px', borderRadius: '4px' }}>
