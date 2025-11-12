@@ -51,9 +51,6 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
   };
 
   const groupedDays = groupWorkDays(schedule);
-
-  console.log('groupedDays', groupedDays);
-
   const closeDays = schedule.filter((day) => !day.open);
 
   return (
@@ -109,7 +106,14 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
             Object.entries(groupedDays).map(([key, days]) => (
               <Typography component="div" key={key} display="flex" gap={0.5}>
                 <Typography component="span" fontWeight="bold">
-                  {days.length === 7 ? 'Ежедневно' : days.map((d) => d.day).join(', ')}:
+                  {days.length === 7
+                    ? 'Ежедневно'
+                    : days.length === 5 && days[0].day === 'Пн' && days[4].day === 'Пт'
+                      ? 'По будням'
+                      : days.length === 6 && days[0].day === 'Пн' && days[5].day === 'Сб'
+                        ? 'Пн - Сб'
+                        : days.map((d) => d.day).join(', ')
+                  }:
                 </Typography>
                 {key === '24h'
                   ? 'круглосуточно'

@@ -102,12 +102,18 @@ const CreateEstablishment = () => {
     }
   };
 
-  const handleScheduleChange = (index: number | null) => {
+  const handleScheduleChange = (index: number) => {
     setState((prevState) => ({
       ...prevState,
       schedule: prevState.schedule.map((item, i) =>
         i === index ? { ...item, open: !item.open } : item,
       ),
+    }));
+  };
+
+  const handleBreakTimeChange = () => {
+    setState((prevState) => ({
+      ...prevState,
       breakTime: {
         ...prevState.breakTime,
         break: !prevState.breakTime.break,
@@ -302,6 +308,7 @@ const CreateEstablishment = () => {
             breakData={state.breakTime}
             schedule={state.schedule}
             handleScheduleChange={handleScheduleChange}
+            handleBreakTimeChange={handleBreakTimeChange}
             handleTimeChange={handleTimeChange}
             handleTwentyHoursChange={handleTwentyHoursChange}
           />

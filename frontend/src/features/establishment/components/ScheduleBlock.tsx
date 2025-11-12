@@ -12,7 +12,8 @@ interface Props {
   handleSetTimeEveryone: (name: 'start' | 'finish', value: Dayjs | null) => void;
   breakData: BreakData;
   schedule: WorkSchedule[];
-  handleScheduleChange: (index: number | null) => void;
+  handleScheduleChange: (index: number) => void;
+  handleBreakTimeChange: () => void;
   handleTimeChange: (index: number | null, name: 'start' | 'finish', value: Dayjs | null) => void;
   handleTwentyHoursChange: (index: number) => void;
 }
@@ -23,6 +24,7 @@ const ScheduleBlock: React.FC<Props> = ({
   breakData,
   schedule,
   handleScheduleChange,
+  handleBreakTimeChange,
   handleTimeChange,
   handleTwentyHoursChange,
 }) => {
@@ -101,7 +103,7 @@ const ScheduleBlock: React.FC<Props> = ({
               control={
                 <Checkbox
                   checked={breakData.break}
-                  onChange={() => handleScheduleChange(null)}
+                  onChange={handleBreakTimeChange}
                 />
               }
               label="Перерыв"
