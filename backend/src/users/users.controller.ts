@@ -18,8 +18,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
+import { createMulterStorage } from '../config/multer.config';
 
 interface UserRequest extends Request {
   user: {
@@ -102,15 +101,7 @@ export class UsersController {
   @Put('sessions/update')
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './public/uploads/users',
-        filename: (_req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = path.extname(file.originalname);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-        },
-      }),
+      storage: createMulterStorage('./public/uploads/users'),
     }),
   )
   async editUser(

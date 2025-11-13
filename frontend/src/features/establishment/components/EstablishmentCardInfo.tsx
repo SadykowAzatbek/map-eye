@@ -60,11 +60,11 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
         {establishments.name}
       </Typography>
 
-      <Typography component="div">
+      <Typography component="div" mt={0.5}>
         {establishments.address.replace(`${myLocation?.location}`, '')}
       </Typography>
 
-      <Typography component="div" display="flex" mb={2} borderBottom="1px solid #000" borderColor="gray">
+      <Typography component="div" display="flex" mb={1} pb={1} borderBottom="1px solid #000" borderColor="gray">
         {Array.from({ length: stars }, (_, i) => (
           <StarIcon key={`star-${i}`} />
         ))}
@@ -157,7 +157,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
           Одобрен:
           {establishments.approved ?
             <span style={{ color: '#008000' }}> одобрена</span> :
-            <span style={{ color: '#FF0000' }}> нет</span>}
+            <span style={{ color: '#aa5806' }}> На рассмотрении...</span>}
         </b>
       </Typography>
     </Box>

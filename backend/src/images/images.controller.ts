@@ -13,13 +13,12 @@ import { Image } from '../schemas/image.schema';
 import mongoose, { Model, ObjectId } from 'mongoose';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
 import { Request } from 'express';
 import {
   Establishment,
   EstablishmentDocument,
 } from '../schemas/establishment.schema';
+import { createMulterStorage } from '../config/multer.config';
 
 interface UserRequest extends Request {
   user: {
@@ -41,15 +40,7 @@ export class ImagesController {
   @Post(':id')
   @UseInterceptors(
     FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './public/uploads/establishments',
-        filename: (_req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = path.extname(file.originalname);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-        },
-      }),
+      storage: createMulterStorage('./public/uploads/establishments'),
     }),
   )
   async addImages(
