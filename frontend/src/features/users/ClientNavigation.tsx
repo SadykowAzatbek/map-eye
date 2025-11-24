@@ -1,5 +1,5 @@
 import ProfileEdit from './components/ProfileEdit.tsx';
-import { useOpenEditProfile } from '../../components/UI/AppToolbar/components/UseOpenEditProfile.tsx';
+import { useOpenEditProfile } from '../../components/UI/AppToolbar/config/UseOpenEditProfile.tsx';
 import { Box, CircularProgress, Grid, Typography } from '@mui/material';
 import EstablishmentCardInfo from '../establishment/components/EstablishmentCardInfo.tsx';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
@@ -22,21 +22,23 @@ const ClientNavigation = () => {
   }, [dispatch]);
 
   return (
-    <Box className="container" sx={{ marginTop: "100px", position: "relative" }}>
+    <>
       {isOpen && (<ProfileEdit />)}
-      <Typography component="div" variant="h3">
-        <b>Мое заведение</b>
-      </Typography>
-      <Grid container alignItems="stretch" spacing={2}>
-        {myEstablishments.map((establishment) => (
-          <Grid item xs={6} key={establishment._id}>
-            {!myEstablishmentsLoading ?
-              <EstablishmentCardInfo establishments={establishment} />
-              : <CircularProgress />}
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+      <Box className="container" sx={{ marginTop: "100px" }}>
+        <Typography component="div" variant="h3">
+          <b>Мое заведение</b>
+        </Typography>
+        <Grid container alignItems="stretch" spacing={2}>
+          {myEstablishments.map((establishment) => (
+            <Grid item xs={6} key={establishment._id}>
+              {!myEstablishmentsLoading ?
+                <EstablishmentCardInfo establishments={establishment} />
+                : <CircularProgress />}
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </>
   );
 };
 

@@ -3,7 +3,7 @@ import axiosApi from '../../utils/axiosApi';
 import { serverRoute } from '../../utils/constants';
 import { isAxiosError } from 'axios';
 import { unsetUser } from './usersSlice';
-import {LoginMutation, RegisterMutation, RegisterResponse, User, UserSecondaryData} from '../../types/types.User';
+import { LoginMutation, RegisterMutation, RegisterResponse, User, UserSecondaryData } from '../../types/types.User';
 import { GlobalErrorMessage, ValidationError } from '../../types/types';
 
 

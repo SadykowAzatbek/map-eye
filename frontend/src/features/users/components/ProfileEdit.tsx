@@ -6,12 +6,14 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
 import { selectUser, selectUserEditLoading } from '../usersSlice.ts';
 import { profileEditThunk } from '../usersThunks.ts';
 import { useNavigate } from 'react-router-dom';
+import { useOpenEditProfile } from '../../../components/UI/AppToolbar/config/UseOpenEditProfile.tsx';
 
 const ProfileEdit = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const userEditLoading = useAppSelector(selectUserEditLoading);
   const navigate = useNavigate();
+  const toggleOpen = useOpenEditProfile((state) => state.toggleOpen);
 
   const [userData, setUserData] = useState({
     email: '',
@@ -59,34 +61,35 @@ const ProfileEdit = () => {
   };
 
   return (
-    <div className="profile-edit-gray-background">
-      <Box component="form" onSubmit={handleSubmit} className="opening-edit-profile-window">
-        <TextField
-          required
-          label="Email"
-          name="email"
-          type="email"
-          value={userData.email}
-          onChange={inputChangeHandler}
-          placeholder="email@email.com"
-        />
-        <TextField
-          required
-          label="Отображаемое имя"
-          name="displayName"
-          type="text"
-          value={userData.displayName}
-          onChange={inputChangeHandler}
-        />
-        <Typography component="div" sx={{ display: "flex", alignItems: "center" }}>
-          <AddAPhotoIcon fontSize="large" />
-          <FileInput name="image" label="Загрузить аватар" onChange={fileInputChangeHandler} />
-        </Typography>
+    <div>
+      <div onClick={toggleOpen} className="profile-edit-gray-background" />
+        <Box component="form" onSubmit={handleSubmit} className="opening-edit-profile-window">
+          <TextField
+            required
+            label="Email"
+            name="email"
+            type="email"
+            value={userData.email}
+            onChange={inputChangeHandler}
+            placeholder="email@email.com"
+          />
+          <TextField
+            required
+            label="Отображаемое имя"
+            name="displayName"
+            type="text"
+            value={userData.displayName}
+            onChange={inputChangeHandler}
+          />
+          <Typography component="div" display="flex" alignItems="center" gap={1}>
+            <AddAPhotoIcon fontSize="large" />
+            <FileInput name="image" label="Загрузить аватар" onChange={fileInputChangeHandler} />
+          </Typography>
 
-        <Button type="submit">
-          Изменить {userEditLoading && <CircularProgress />}
-        </Button>
-      </Box>
+          <Button type="submit">
+            Изменить {userEditLoading && <CircularProgress />}
+          </Button>
+        </Box>
     </div>
   );
 };

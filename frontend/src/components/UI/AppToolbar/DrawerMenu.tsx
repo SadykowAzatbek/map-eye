@@ -65,7 +65,7 @@ const DrawerMenu: React.FC<Props> = ({ open, toggleDrawer, window }) => {
     >
       <Box onClick={toggleDrawer}>
         <Typography variant="h6" sx={{ mx: 2, my: 2 }}>
-          TechGear Logistics
+          Map eye
         </Typography>
         <Divider />
         <List>

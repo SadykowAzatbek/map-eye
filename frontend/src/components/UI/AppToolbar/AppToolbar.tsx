@@ -93,7 +93,7 @@ const AppToolbar = () => {
             )}
 
             {location.pathname === '/' && user && <NavMenu />}
-            {location.pathname === appRoutes.profile && user && <OpenEditProfileMenu />}
+            {location.pathname === appRoutes.profile && user && <OpenEditProfileMenu user={user} />}
             {user && location.pathname === '/' ? (
               <UserMenu user={user} />
             ) : (

@@ -14,6 +14,7 @@ interface Props {
 const UserMenu: React.FC<Props> = ({ user }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -51,7 +52,20 @@ const UserMenu: React.FC<Props> = ({ user }) => {
           sx={{ display: 'flex', gap: 1 }}
           disableRipple
         >
-          <AccountCircleIcon sx={{ width: 24, height: 24 }} />
+          {user.image ? (
+            <img
+              src={'http://localhost:8000/' + user.image}
+              alt="Аватарка"
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                objectFit: 'cover',
+              }}
+            />
+          ) : (
+            <AccountCircleIcon sx={{ width: 24, height: 24 }} />
+          )}
         </IconButton>
       </Stack>
       <Menu
