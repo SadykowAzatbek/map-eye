@@ -18,12 +18,6 @@ export interface LoginMutation {
   password: string;
 }
 
-export interface UserSecondaryData {
-  email: string;
-  displayName: string;
-  image: File | null;
-}
-
 export interface RegisterResponse {
   message: string;
   user: User;

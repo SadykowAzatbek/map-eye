@@ -19,6 +19,8 @@ import { Request } from 'express';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createMulterStorage } from '../config/multer.config';
+import * as fs from 'fs';
+import * as path from 'path';
 
 interface UserRequest extends Request {
   user: {
@@ -110,9 +112,36 @@ export class UsersController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const userToUpdate = await this.userModel.findById(req.user?._id);
+
     if (!userToUpdate) {
       throw new UnprocessableEntityException();
     }
+
+    // путь к старому файлу
+    const oldImage = userToUpdate.image;
+
+    // если пришёл новый файл — удалить старый
+    if (file) {
+      if (oldImage) {
+        const fullPath = path.join('./public', oldImage);
+        if (fs.existsSync(fullPath)) {
+          fs.unlinkSync(fullPath);
+        }
+      }
+      userToUpdate.image = '/uploads/users/' + file.filename;
+    }
+
+    // если файл не пришёл
+    if (!file) {
+      if (oldImage) {
+        const fullPath = path.join('./public', oldImage);
+        if (fs.existsSync(fullPath)) {
+          fs.unlinkSync(fullPath);
+        }
+      }
+      userToUpdate.image = null;
+    }
+
     Object.assign(userToUpdate, userDto); // копирование свойства одного объекта в другой
     await userToUpdate.save();
 

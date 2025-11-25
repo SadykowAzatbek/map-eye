@@ -3,7 +3,7 @@ import axiosApi from '../../utils/axiosApi';
 import { serverRoute } from '../../utils/constants';
 import { isAxiosError } from 'axios';
 import { unsetUser } from './usersSlice';
-import { LoginMutation, RegisterMutation, RegisterResponse, User, UserSecondaryData } from '../../types/types.User';
+import { LoginMutation, RegisterMutation, RegisterResponse, User } from '../../types/types.User';
 import { GlobalErrorMessage, ValidationError } from '../../types/types';
 
 
@@ -54,25 +54,12 @@ export const logout = createAsyncThunk<void, undefined>(
 
 export const profileEditThunk = createAsyncThunk<
   RegisterResponse,
-  UserSecondaryData,
-  {
-    rejectValue: ValidationError;
-  }
+  FormData,
+  { rejectValue: ValidationError }
 >(
   'users/profileEdit',
-  async (profileMutation, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const formData = new FormData();
-
-      // Добавляем поля в FormData
-      formData.append('email', profileMutation.email);
-      formData.append('displayName', profileMutation.displayName);
-
-      // Если есть файл, добавляем его
-      if (profileMutation.image) {
-        formData.append('image', profileMutation.image);
-      }
-
       const response = await axiosApi.put(
         `${serverRoute.sessions}update`,
         formData,
@@ -91,6 +78,6 @@ export const profileEditThunk = createAsyncThunk<
 
       throw e;
     }
-
   },
 );
+

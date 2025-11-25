@@ -51,14 +51,26 @@ const ProfileEdit = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (user)
-      dispatch(profileEditThunk(userData));
+    if (!user) return;
+
+    const formData = new FormData();
+    formData.append('email', userData.email);
+    formData.append('displayName', userData.displayName);
+
+    // если загружен файл
+    if (userData.image) {
+      formData.append('image', userData.image);
+    }
+
+    await dispatch(profileEditThunk(formData));
 
     navigate('/');
+    toggleOpen();
   };
+
 
   return (
     <div>
