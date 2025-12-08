@@ -8,6 +8,7 @@ import Map from '../features/maps/Map.tsx';
 import CreateEstablishment from '../features/establishment/containers/CreateEstablishment.tsx';
 import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute.tsx';
 import ClientNavigation from '../features/users/ClientNavigation.tsx';
+import Establishment from '../features/establishment/containers/Establishment.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,14 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: appRoutes.myEstablishment,
+        element: (
+          <ProtectedRoute>
+            <Establishment />
+          </ProtectedRoute>
+        )
+      }
     ],
   },
 ]);

@@ -8,6 +8,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import LunchDiningIcon from '@mui/icons-material/LunchDining';
 import dayjs from 'dayjs';
+import { NavLink } from 'react-router-dom';
+import { appRoutes } from '../../../utils/constants.ts';
 
 interface Props {
   establishments: EstablishmentApi;
@@ -55,7 +57,11 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
   const closeDays = schedule.filter((day) => !day.open);
 
   return (
-    <Box sx={{ border: '1px solid #000', p: 3, m: 2, borderRadius: '1rem', cursor: 'pointer', height: '100%' }}>
+    <NavLink
+      to={appRoutes.myEstablishment.replace(':id', establishments._id)}
+      style={{ color: 'inherit', textDecoration: 'none' }}
+    >
+      <Box sx={{ border: '1px solid #000', p: 3, m: 2, borderRadius: '1rem', cursor: 'pointer', height: '100%' }}>
       <Typography component="h6" variant="h5">
         {establishments.name}
       </Typography>
@@ -161,6 +167,7 @@ const EstablishmentCardInfo: React.FC<Props> = ({ establishments }) => {
         </b>
       </Typography>
     </Box>
+    </NavLink>
   );
 };
 

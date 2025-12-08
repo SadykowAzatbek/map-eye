@@ -20,6 +20,7 @@ export const appRoutes = {
   login: '/login',
   profile: '/profile',
   createEstablishment: '/establishment/create',
+  myEstablishment: '/establishment/:id',
 };
 
 export const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
